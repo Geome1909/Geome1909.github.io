@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,21 +8,60 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root {
+/* ══════════════════════════════════════════════
+   TEMA CLARO / OSCURO
+══════════════════════════════════════════════ */
+:root,
+[data-theme="light"] {
   --bg: #ffffff;
   --surface: #f9f9f7;
   --surface2: #f2f2ee;
+  --surface3: #ebebе6;
   --border: #e8e8e4;
+  --border2: #d8d8d2;
   --text: #1a1a16;
-  --text-muted: #8a8a7a;
-  --text-faint: #b8b8a8;
+  --text-muted: #7a7a6a;
+  --text-faint: #b0b0a0;
   --accent: #2d5be3;
   --accent-light: #eef1fd;
+  --accent-mid: #c0ccf0;
   --error: #c0392b;
   --success: #1a6b3a;
+  --warn: #b45309;
   --point-a: #2d5be3;
   --point-b: #c0392b;
   --point-c: #1a6b3a;
+  --canvas-grid: #eeeeeb;
+  --canvas-axis: #b8b8a8;
+  --canvas-axis-label: #c0c0b2;
+  --modal-bg: rgba(0,0,0,0.45);
+  --shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+
+[data-theme="dark"] {
+  --bg: #111110;
+  --surface: #1c1c1a;
+  --surface2: #242422;
+  --surface3: #2c2c28;
+  --border: #2e2e2a;
+  --border2: #3a3a34;
+  --text: #e8e8e0;
+  --text-muted: #8a8a78;
+  --text-faint: #505048;
+  --accent: #5b84f0;
+  --accent-light: #1a2240;
+  --accent-mid: #2a3560;
+  --error: #e05a4a;
+  --success: #3a9a5a;
+  --warn: #d4880a;
+  --point-a: #5b84f0;
+  --point-b: #e05a4a;
+  --point-c: #3a9a5a;
+  --canvas-grid: #202020;
+  --canvas-axis: #3a3a30;
+  --canvas-axis-label: #505048;
+  --modal-bg: rgba(0,0,0,0.70);
+  --shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 
 body {
@@ -32,427 +71,447 @@ body {
   min-height: 100vh;
   font-size: 13px;
   line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.25s, color 0.25s;
 }
 
+/* ── HEADER ── */
 header {
   border-bottom: 1px solid var(--border);
-  padding: 20px 36px 16px;
+  padding: 18px 32px 14px;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 14px;
 }
-header h1 {
-  font-family: 'Fraunces', serif;
-  font-weight: 300;
-  font-size: 20px;
-  letter-spacing: -0.4px;
-}
-header span {
-  font-size: 10px;
-  color: var(--text-muted);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-.header-right {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-}
+header h1 { font-family:'Fraunces',serif; font-weight:300; font-size:20px; letter-spacing:-0.4px; flex-shrink:0; }
+header > span { font-size:10px; color:var(--text-muted); letter-spacing:0.1em; text-transform:uppercase; flex-shrink:0; }
+.header-right { margin-left:auto; display:flex; align-items:center; gap:12px; }
 .author-link {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: lowercase;
-  color: var(--text-faint);
-  text-decoration: none;
-  transition: color 0.15s;
-  border-bottom: 1px solid transparent;
-  padding-bottom: 1px;
+  font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.12em;
+  text-transform:lowercase; color:var(--text-faint); text-decoration:none;
+  border-bottom:1px solid transparent; padding-bottom:1px; transition:color 0.15s;
 }
-.author-link:hover {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
-}
+.author-link:hover { color:var(--accent); border-bottom-color:var(--accent); }
 
-nav {
-  border-bottom: 1px solid var(--border);
-  padding: 0 36px;
-  display: flex;
+/* ── DARK MODE TOGGLE ── */
+.theme-wrap { display:flex; align-items:center; gap:8px; }
+.theme-label { font-size:9px; color:var(--text-faint); letter-spacing:0.08em; text-transform:uppercase; transition:color 0.25s; }
+.theme-btn {
+  position:relative; width:48px; height:26px; border-radius:13px;
+  background:var(--surface2); border:1px solid var(--border2); cursor:pointer;
+  transition:background 0.3s, border-color 0.3s; flex-shrink:0; padding:0;
+  display:flex; align-items:center;
 }
+.theme-btn-track {
+  position:absolute; inset:0; border-radius:13px; overflow:hidden; pointer-events:none;
+}
+.theme-btn-thumb {
+  position:absolute; top:3px; left:3px;
+  width:18px; height:18px; border-radius:50%;
+  background:var(--text-muted);
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; line-height:1;
+  transition:transform 0.3s cubic-bezier(.34,1.56,.64,1), background 0.3s;
+  box-shadow:0 1px 4px rgba(0,0,0,0.2);
+}
+[data-theme="dark"] .theme-btn { background:var(--accent-mid); border-color:var(--accent); }
+[data-theme="dark"] .theme-btn-thumb { transform:translateX(22px); background:var(--accent); }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(16px);
+  background:var(--text); color:var(--bg); padding:8px 18px; border-radius:100px;
+  font-size:11px; letter-spacing:0.05em; pointer-events:none;
+  opacity:0; transition:opacity 0.2s, transform 0.2s; z-index:9999;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ── SYM BAR ── */
+.sym-bar {
+  border-bottom:1px solid var(--border); padding:5px 32px;
+  display:flex; align-items:center; gap:6px; background:var(--surface);
+}
+.sym-bar-label { font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-faint); margin-right:4px; flex-shrink:0; }
+.sym-btn {
+  font-family:'DM Mono',monospace; font-size:13px; padding:3px 10px;
+  border:1px solid var(--border); border-radius:3px; background:var(--bg);
+  color:var(--text); cursor:pointer; transition:background 0.1s, border-color 0.12s;
+  line-height:1.4; user-select:none;
+}
+.sym-btn:hover { background:var(--accent-light); border-color:var(--accent); color:var(--accent); }
+.sym-btn:active { transform:scale(0.94); }
+
+/* ── TABS ── */
+nav { border-bottom:1px solid var(--border); padding:0 32px; display:flex; }
 .tab {
-  padding: 10px 18px;
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  cursor: pointer;
-  border: none;
-  background: none;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  transition: color 0.15s, border-color 0.15s;
+  padding:10px 18px; font-family:'DM Mono',monospace; font-size:10px;
+  letter-spacing:0.07em; text-transform:uppercase; color:var(--text-muted);
+  cursor:pointer; border:none; background:none;
+  border-bottom:2px solid transparent; margin-bottom:-1px;
+  transition:color 0.15s, border-color 0.15s;
 }
-.tab:hover { color: var(--text); }
-.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab:hover { color:var(--text); }
+.tab.active { color:var(--accent); border-bottom-color:var(--accent); }
 
-main {
-  display: grid;
-  grid-template-columns: 368px 1fr;
-  height: calc(100vh - 143px);
-}
+/* ── LAYOUT ── */
+main { display:grid; grid-template-columns:380px 1fr; flex:1; min-height:0; height:calc(100vh - 140px); }
 
 /* ── LEFT PANEL ── */
-.panel-left {
-  border-right: 1px solid var(--border);
-  overflow-y: auto;
-}
-.panel-left::-webkit-scrollbar { width: 3px; }
-.panel-left::-webkit-scrollbar-thumb { background: var(--border); }
+.panel-left { border-right:1px solid var(--border); overflow-y:auto; }
+.panel-left::-webkit-scrollbar { width:3px; }
+.panel-left::-webkit-scrollbar-thumb { background:var(--border); }
+.section { display:none; }
+.section.active { display:block; }
 
-.section { display: none; }
-.section.active { display: block; }
-
+/* ── TABLE HEAD ── */
 .tbl-head {
-  padding: 14px 20px 10px;
-  border-bottom: 1px solid var(--border);
+  padding:12px 18px 10px; border-bottom:1px solid var(--border);
+  display:flex; align-items:flex-start; justify-content:space-between; gap:8px;
 }
-.tbl-head h2 {
-  font-family: 'Fraunces', serif;
-  font-weight: 300;
-  font-size: 14px;
-}
-.hint {
-  margin-top: 5px;
-  font-size: 10px;
-  color: var(--text-faint);
-  line-height: 1.8;
-}
-.hint code {
-  background: var(--surface2);
-  padding: 1px 5px;
-  border-radius: 2px;
-  color: var(--text-muted);
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-}
+.tbl-head-left { flex:1; }
+.tbl-head h2 { font-family:'Fraunces',serif; font-weight:300; font-size:14px; }
+.hint { margin-top:4px; font-size:10px; color:var(--text-faint); line-height:1.8; }
+.hint code { background:var(--surface2); padding:1px 5px; border-radius:2px; color:var(--text-muted); font-family:'DM Mono',monospace; font-size:10px; }
 
-.coord-table { width: 100%; border-collapse: collapse; }
+/* header action buttons row */
+.tbl-actions { display:flex; align-items:center; gap:6px; flex-shrink:0; margin-top:2px; }
+
+/* ── CLEAR BTN ── */
+.btn-clear {
+  font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.06em; text-transform:uppercase;
+  padding:4px 9px; border:1px solid var(--border); border-radius:3px;
+  background:var(--bg); color:var(--text-muted); cursor:pointer; transition:all 0.12s; white-space:nowrap;
+}
+.btn-clear:hover { background:var(--error); border-color:var(--error); color:#fff; }
+.btn-clear:active { transform:scale(0.95); }
+
+/* ── HELP BTN ── */
+.btn-help {
+  width:22px; height:22px; border-radius:50%;
+  border:1px solid var(--border); background:var(--bg); color:var(--text-muted);
+  font-family:'Fraunces',serif; font-size:12px; font-weight:400; line-height:1;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all 0.12s; flex-shrink:0;
+}
+.btn-help:hover { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+/* ── COORD TABLE ── */
+.coord-table { width:100%; border-collapse:collapse; }
 .coord-table th {
-  background: var(--surface);
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-faint);
-  padding: 6px 14px;
-  text-align: left;
-  font-weight: 400;
-  border-bottom: 1px solid var(--border);
+  background:var(--surface); font-size:9px; letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--text-faint); padding:5px 14px; text-align:left; font-weight:400;
+  border-bottom:1px solid var(--border);
 }
-.coord-table td {
-  padding: 0;
-  border-bottom: 1px solid var(--border);
-}
+.coord-table td { padding:0; border-bottom:1px solid var(--border); }
 .point-label {
-  width: 28px;
-  text-align: center;
-  font-size: 11px;
-  border-right: 1px solid var(--border);
-  padding: 9px 6px;
-  vertical-align: middle;
-  color: var(--text-muted);
+  width:28px; text-align:center; font-size:11px;
+  border-right:1px solid var(--border); padding:8px 6px; vertical-align:middle; color:var(--text-muted);
 }
-.point-label.A { color: var(--point-a); font-weight: 500; }
-.point-label.B { color: var(--point-b); font-weight: 500; }
-.point-label.C { color: var(--point-c); font-weight: 500; }
-
+.point-label.A { color:var(--point-a); font-weight:500; }
+.point-label.B { color:var(--point-b); font-weight:500; }
+.point-label.C { color:var(--point-c); font-weight:500; }
 .coord-input {
-  width: 100%;
-  border: none;
-  outline: none;
-  font-family: 'DM Mono', monospace;
-  font-size: 12.5px;
-  padding: 9px 10px;
-  background: transparent;
-  color: var(--text);
-  transition: background 0.1s;
+  width:100%; border:none; outline:none; font-family:'DM Mono',monospace; font-size:12.5px;
+  padding:8px 10px; background:transparent; color:var(--text); transition:background 0.1s;
 }
-.coord-input:focus { background: var(--accent-light); }
-.coord-input.invalid { color: var(--error); background: #fff6f6; }
+.coord-input:focus { background:var(--accent-light); }
+.coord-input.invalid { color:var(--error); background:var(--accent-light); filter:hue-rotate(200deg); }
 
 /* ── RESULTS ── */
-.result-box {
-  margin: 14px 18px 0;
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  overflow: hidden;
-}
+.result-box { margin:12px 16px 0; border:1px solid var(--border); border-radius:3px; overflow:hidden; }
 .result-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 9px 14px;
-  border-bottom: 1px solid var(--border);
-  gap: 8px;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:8px 13px; border-bottom:1px solid var(--border); gap:8px;
 }
-.result-row:last-child { border-bottom: none; }
-.result-row.hl { background: var(--accent-light); }
-.result-label {
-  font-size: 10px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.result-value {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text);
-  font-family: 'Fraunces', serif;
-  text-align: right;
-}
-.result-value.accent { color: var(--accent); }
+.result-row:last-child { border-bottom:none; }
+.result-row.hl { background:var(--accent-light); }
+.result-row.hl-ang { background:var(--surface); }
+.result-label { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; white-space:nowrap; flex-shrink:0; }
+.result-value { font-size:13px; font-weight:500; color:var(--text); font-family:'Fraunces',serif; text-align:right; }
+.result-value.accent { color:var(--accent); }
 .sym-val { display:flex; flex-direction:column; align-items:flex-end; gap:1px; }
-.sym-val .sym { font-size:10.5px; color:var(--text-muted); font-family:'DM Mono',monospace; }
+.sym-val .sym { font-size:10px; color:var(--text-muted); font-family:'DM Mono',monospace; }
 .sym-val .dec { font-size:13px; font-family:'Fraunces',serif; font-weight:500; }
-.sym-val .dec.accent { color:var(--accent); }
 
-/* ── SYMBOL BAR ── */
-.sym-bar {
-  border-bottom: 1px solid var(--border);
-  padding: 6px 36px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--surface);
+/* ── COPY INLINE ── */
+.copy-row { display:flex; align-items:center; gap:8px; justify-content:flex-end; flex:1; min-width:0; }
+.btn-copy-sm {
+  font-size:8px; letter-spacing:0.06em; text-transform:uppercase;
+  padding:3px 9px; border:1px solid var(--border); border-radius:3px;
+  background:transparent; color:var(--text-faint); cursor:pointer;
+  font-family:'DM Mono',monospace; transition:all 0.12s; flex-shrink:0; white-space:nowrap;
 }
-.sym-bar-label {
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-faint);
-  margin-right: 4px;
-  flex-shrink: 0;
-}
-.sym-btn {
-  font-family: 'DM Mono', monospace;
-  font-size: 13px;
-  padding: 3px 10px;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  background: var(--bg);
-  color: var(--text);
-  cursor: pointer;
-  transition: background 0.1s, border-color 0.12s, color 0.12s;
-  line-height: 1.4;
-  user-select: none;
-}
-.sym-btn:hover {
-  background: var(--accent-light);
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.sym-btn:active { transform: scale(0.94); }
+.btn-copy-sm:hover { background:var(--accent-light); border-color:var(--accent); color:var(--accent); }
+.btn-copy-sm.ok { background:var(--success); border-color:var(--success); color:#fff; }
 
-.badge {
-  display:inline-block; padding:3px 10px;
-  font-size:10px; letter-spacing:0.07em; text-transform:uppercase;
-  border-radius:100px; font-weight:500; font-family:'DM Mono',monospace;
+/* ── COPY ALL BTN ── */
+.copy-all-wrap {
+  margin:14px 16px 0;
+  display:flex; flex-direction:column; gap:5px;
 }
-.badge.yes  { background:#e6f4ec; color:var(--success); }
-.badge.no   { background:#fdecea; color:var(--error); }
-.badge.info { background:#eef1fd; color:var(--accent); }
+.copy-all-label {
+  font-size:9px; letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--text-faint); padding-left:2px;
+}
+.btn-copy-all {
+  width:100%; font-family:'DM Mono',monospace; font-size:12px; letter-spacing:0.08em;
+  text-transform:uppercase; padding:13px 16px; border:none;
+  border-radius:5px; background:var(--accent); color:#fff;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;
+  transition:all 0.15s; font-weight:500; box-shadow:0 2px 8px rgba(45,91,227,0.25);
+}
+.btn-copy-all:hover { opacity:0.88; transform:translateY(-1px); box-shadow:0 4px 14px rgba(45,91,227,0.35); }
+.btn-copy-all:active { transform:scale(0.98) translateY(0); }
+.btn-copy-all.ok { background:var(--success); box-shadow:0 2px 8px rgba(26,107,58,0.3); }
+[data-theme="dark"] .btn-copy-all { box-shadow:0 2px 8px rgba(91,132,240,0.3); }
+.copy-icon { font-size:17px; }
+
+/* ── BADGE ── */
+.badge { display:inline-block; padding:3px 10px; font-size:10px; letter-spacing:0.07em; text-transform:uppercase; border-radius:100px; font-weight:500; font-family:'DM Mono',monospace; }
+.badge.yes  { background:#e6f4ec; color:#1a6b3a; }
+.badge.no   { background:#fdecea; color:#c0392b; }
+.badge.info { background:var(--accent-light); color:var(--accent); }
+[data-theme="dark"] .badge.yes { background:#0e2e1a; }
+[data-theme="dark"] .badge.no  { background:#2e0e0a; }
 
 /* ── PROCESS ── */
 .proc-toggle {
-  margin: 12px 18px 0;
-  padding: 8px 12px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 2px 2px 0 0;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  user-select: none;
-  transition: background 0.1s;
+  margin:10px 16px 0; padding:8px 12px;
+  background:var(--surface); border:1px solid var(--border); border-radius:3px 3px 0 0;
+  font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted);
+  cursor:pointer; display:flex; align-items:center; justify-content:space-between;
+  user-select:none; transition:background 0.1s;
 }
-.proc-toggle:hover { background: var(--surface2); }
-.proc-toggle .arrow { transition: transform 0.2s; display:inline-block; }
-.proc-toggle.open .arrow { transform: rotate(90deg); }
-.proc-toggle.closed + .proc-panel { display:none; }
-
+.proc-toggle:hover { background:var(--surface2); }
+.proc-toggle .arrow { transition:transform 0.2s; display:inline-block; }
+.proc-toggle.open .arrow { transform:rotate(90deg); }
 .proc-panel {
-  margin: 0 18px 0;
-  border: 1px solid var(--border);
-  border-top: none;
-  border-radius: 0 0 2px 2px;
-  overflow: hidden;
-  background: var(--surface);
+  margin:0 16px 0; border:1px solid var(--border); border-top:none;
+  border-radius:0 0 3px 3px; overflow:hidden; background:var(--surface);
 }
-
-.step {
-  padding: 11px 14px;
-  border-bottom: 1px solid var(--border);
-}
-.step:last-child { border-bottom: none; }
-.step-hd {
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-faint);
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-.step-num {
-  width:16px; height:16px; border-radius:50%;
-  background: var(--border); color:var(--text-muted);
-  font-size:9px; display:flex; align-items:center; justify-content:center;
-  flex-shrink:0;
-}
-.step-body { font-size:11.5px; line-height:2.1; }
+.step { padding:10px 13px; border-bottom:1px solid var(--border); }
+.step:last-child { border-bottom:none; }
+.step-hd { font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-faint); margin-bottom:7px; display:flex; align-items:center; gap:7px; }
+.step-num { width:16px; height:16px; border-radius:50%; background:var(--border); color:var(--text-muted); font-size:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.step-body { font-size:11px; line-height:2.1; }
 .step-body .ln { display:flex; align-items:baseline; flex-wrap:wrap; gap:4px; }
 .step-body .lbl { color:var(--text); min-width:110px; }
 .step-body .eq { color:var(--text-faint); }
 .step-body .val { color:var(--accent); font-weight:500; }
 .step-body .dim { color:var(--text-muted); font-size:10px; }
-.step-body .fin { color:var(--accent); font-size:14px; font-family:'Fraunces',serif; font-weight:500; }
+.step-body .fin { color:var(--accent); font-size:13px; font-family:'Fraunces',serif; font-weight:500; }
 .step-body .verdict-yes { color:var(--success); font-weight:500; }
 .step-body .verdict-no  { color:var(--error);   font-weight:500; }
-.step-body .spc { height:6px; }
+.step-body .spc { height:5px; }
+.step-body .ang { color:var(--warn); font-weight:500; }
 
-/* formula */
-.formula-box {
-  margin: 12px 18px 18px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 10px 14px;
-  font-size:10.5px; color:var(--text-muted);
-  line-height:1.9; font-style:italic;
-}
+/* ── FORMULA BOX ── */
+.formula-box { margin:10px 16px 16px; background:var(--surface); border:1px solid var(--border); padding:9px 13px; font-size:10.5px; color:var(--text-muted); line-height:1.9; font-style:italic; border-radius:3px; }
 .formula-box strong { font-style:normal; color:var(--text); font-weight:500; }
 
 /* ── RIGHT PANEL ── */
-.panel-right {
-  display: flex;
-  flex-direction: column;
-}
-.graph-hd {
-  padding: 11px 22px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-}
-.graph-title {
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
+.panel-right { display:flex; flex-direction:column; overflow:hidden; background:var(--bg); }
+.graph-hd { padding:10px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.graph-title { font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); }
 .graph-legend { display:flex; gap:14px; }
 .legend-item { display:flex; align-items:center; gap:5px; font-size:10px; color:var(--text-muted); }
-.legend-dot  { width:6px; height:6px; border-radius:50%; }
-canvas { flex:1; width:100%; display:block; }
+.legend-dot { width:6px; height:6px; border-radius:50%; }
+canvas { flex:1; width:100%; display:block; min-height:0; }
+
+/* ── HISTORIAL ── */
+.hist-drawer { border-top:1px solid var(--border); flex-shrink:0; display:flex; flex-direction:column; max-height:180px; transition:max-height 0.25s ease; overflow:hidden; }
+.hist-drawer.collapsed { max-height:35px; }
+.hist-toggle { padding:8px 20px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); background:var(--surface); flex-shrink:0; }
+.hist-toggle:hover { background:var(--surface2); }
+.hist-toggle .arrow { transition:transform 0.2s; display:inline-block; }
+.hist-drawer.collapsed .hist-toggle .arrow { transform:rotate(-90deg); }
+.hist-body { overflow-y:auto; flex:1; }
+.hist-body::-webkit-scrollbar { width:3px; }
+.hist-body::-webkit-scrollbar-thumb { background:var(--border); }
+.hist-empty { padding:10px 20px; font-size:10px; color:var(--text-faint); font-style:italic; }
+.hist-row { display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--border); padding:6px 20px; font-size:10.5px; }
+.hist-row:last-child { border-bottom:none; }
+.hist-tab { font-size:9px; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-faint); flex-shrink:0; width:68px; }
+.hist-pts { color:var(--text-muted); flex:1; font-size:10px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.hist-val { color:var(--accent); font-family:'Fraunces',serif; font-weight:500; font-size:12px; flex-shrink:0; }
+.hist-time { color:var(--text-faint); font-size:9px; flex-shrink:0; width:38px; text-align:right; }
+.hist-del { background:none; border:none; color:var(--text-faint); cursor:pointer; font-size:13px; padding:0 0 0 4px; line-height:1; transition:color 0.1s; flex-shrink:0; }
+.hist-del:hover { color:var(--error); }
+.hist-clear-btn { font-size:9px; text-transform:uppercase; letter-spacing:0.06em; padding:2px 7px; border:1px solid var(--border); border-radius:2px; background:transparent; color:var(--text-faint); cursor:pointer; font-family:'DM Mono',monospace; transition:all 0.12s; }
+.hist-clear-btn:hover { border-color:var(--error); color:var(--error); }
+
+/* ══════════════════════════════════════════════
+   MODAL DE AYUDA
+══════════════════════════════════════════════ */
+.modal-overlay {
+  position:fixed; inset:0; background:var(--modal-bg);
+  display:flex; align-items:center; justify-content:center;
+  z-index:1000; padding:20px;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.2s;
+}
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal {
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:6px; max-width:480px; width:100%;
+  box-shadow:var(--shadow); overflow:hidden;
+  transform:translateY(10px);
+  transition:transform 0.2s;
+}
+.modal-overlay.open .modal { transform:translateY(0); }
+.modal-head {
+  padding:16px 20px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px;
+}
+.modal-head h3 { font-family:'Fraunces',serif; font-weight:300; font-size:16px; }
+.modal-close {
+  width:26px; height:26px; border-radius:50%; border:1px solid var(--border);
+  background:var(--surface); color:var(--text-muted); cursor:pointer;
+  font-size:14px; display:flex; align-items:center; justify-content:center;
+  transition:all 0.12s; flex-shrink:0;
+}
+.modal-close:hover { background:var(--error); border-color:var(--error); color:#fff; }
+.modal-body { padding:18px 20px; overflow-y:auto; max-height:70vh; }
+.modal-body::-webkit-scrollbar { width:3px; }
+.modal-body::-webkit-scrollbar-thumb { background:var(--border); }
+.modal-section { margin-bottom:16px; }
+.modal-section:last-child { margin-bottom:0; }
+.modal-section-title {
+  font-size:9px; letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--text-faint); margin-bottom:8px; padding-bottom:6px;
+  border-bottom:1px solid var(--border);
+}
+.modal-desc { font-size:12px; color:var(--text-muted); line-height:1.8; margin-bottom:10px; }
+.modal-formula {
+  background:var(--surface); border:1px solid var(--border); border-radius:3px;
+  padding:10px 14px; font-size:11.5px; font-style:italic; color:var(--text-muted);
+  line-height:2;
+}
+.modal-formula strong { font-style:normal; color:var(--text); font-weight:500; }
+.modal-formula code { background:var(--surface2); padding:1px 6px; border-radius:2px; font-style:normal; font-size:11px; font-family:'DM Mono',monospace; color:var(--accent); }
+.modal-tip {
+  margin-top:10px; padding:8px 12px; background:var(--accent-light);
+  border-left:2px solid var(--accent); font-size:11px; color:var(--text-muted);
+  line-height:1.7;
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════ */
+@media (max-width:900px) {
+  header { padding:12px 18px 10px; }
+  nav { padding:0 12px; overflow-x:auto; }
+  nav::-webkit-scrollbar { height:0; }
+  .tab { padding:9px 11px; font-size:9px; white-space:nowrap; }
+  main { grid-template-columns:1fr; grid-template-rows:auto 360px; height:auto; flex:unset; }
+  .panel-left { border-right:none; border-bottom:1px solid var(--border); overflow-y:visible; }
+  .panel-right { height:360px; }
+}
+@media (max-width:560px) {
+  header { padding:10px 14px 8px; flex-wrap:wrap; gap:4px 8px; }
+  header h1 { font-size:16px; }
+  .header-right { width:100%; }
+  .sym-bar { padding:5px 14px; flex-wrap:wrap; gap:4px; }
+  main { grid-template-columns:1fr; grid-template-rows:auto 280px; height:auto; flex:unset; }
+  .panel-right { height:280px; }
+  .tbl-head { padding:10px 12px 8px; }
+  .coord-input { font-size:12px; padding:7px 8px; }
+  .result-box { margin:8px 12px 0; }
+  .copy-all-wrap { margin:8px 12px 0; }
+  .proc-toggle { margin:8px 12px 0; }
+  .proc-panel { margin:0 12px 0; }
+  .formula-box { margin:8px 12px 12px; }
+}
 </style>
 </head>
 <body>
 
+<!-- ══════════════════ HEADER ══════════════════ -->
 <header>
   <h1>Geometría Analítica</h1>
   <span>Distancia · Perímetro · Triángulo · Área</span>
   <div class="header-right">
+    <div class="theme-wrap">
+      <span class="theme-label" id="theme-label">Claro</span>
+      <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar modo oscuro/claro">
+        <div class="theme-btn-thumb" id="theme-thumb">☀️</div>
+      </button>
+    </div>
     <a class="author-link" href="https://www.instagram.com/dhg1909" target="_blank" rel="noopener">dhg1909</a>
   </div>
 </header>
+<div class="toast" id="toast"></div>
 
-<!-- BARRA DE SÍMBOLOS -->
+<!-- ══════════════════ SYM BAR ══════════════════ -->
 <div class="sym-bar">
   <span class="sym-bar-label">Insertar</span>
   <button class="sym-btn" onclick="insertSym('√')" title="Raíz cuadrada">√</button>
-  <button class="sym-btn" onclick="insertSym('/')" title="División / fracción">/</button>
-  <button class="sym-btn" onclick="insertSym('(')" title="Paréntesis apertura">(</button>
-  <button class="sym-btn" onclick="insertSym(')')" title="Paréntesis cierre">)</button>
+  <button class="sym-btn" onclick="insertSym('/')" title="Fracción">/</button>
+  <button class="sym-btn" onclick="insertSym('(')">(</button>
+  <button class="sym-btn" onclick="insertSym(')')">)</button>
 </div>
 
+<!-- ══════════════════ TABS ══════════════════ -->
 <nav>
   <button class="tab active" onclick="switchTab('distancia')">01 · Distancia</button>
   <button class="tab"        onclick="switchTab('perimetro')">02 · Perímetro</button>
-  <button class="tab"        onclick="switchTab('tipo')">03 · Tipo de triángulo</button>
+  <button class="tab"        onclick="switchTab('tipo')">03 · Tipo</button>
   <button class="tab"        onclick="switchTab('area')">04 · Área</button>
 </nav>
 
 <main>
-<!-- ══════ LEFT ══════ -->
+<!-- ══════════════════ PANEL LEFT ══════════════════ -->
 <div class="panel-left">
 
-<!-- TAB 1 -->
+<!-- ── TAB 1: DISTANCIA ── -->
 <div class="section active" id="sec-distancia">
   <div class="tbl-head">
-    <h2>Distancia entre dos puntos</h2>
-    <p class="hint">Formatos: <code>-3√5</code> &nbsp;·&nbsp; <code>1/4</code> &nbsp;·&nbsp; <code>(√3)/4</code> &nbsp;·&nbsp; <code>-(√3)/4</code> &nbsp;·&nbsp; <code>(-√5)/2</code> &nbsp;·&nbsp; <code>3.5</code></p>
+    <div class="tbl-head-left">
+      <h2>Distancia entre dos puntos</h2>
+      <p class="hint">Formatos: <code>-3√5</code> · <code>1/4</code> · <code>(√3)/4</code> · <code>-(√3)/4</code> · <code>3.5</code></p>
+    </div>
+    <div class="tbl-actions">
+      <button class="btn-help" onclick="openHelp('distancia')" title="Ayuda">?</button>
+      <button class="btn-clear" onclick="clearTab('distancia')">✕ Limpiar</button>
+    </div>
   </div>
   <table class="coord-table">
     <thead><tr><th></th><th>x</th><th>y</th></tr></thead>
     <tbody>
-      <tr>
-        <td class="point-label A">A</td>
-        <td><input class="coord-input" id="d_ax" value="-3√5"  oninput="calcDistancia()"></td>
-        <td><input class="coord-input" id="d_ay" value="1/4"   oninput="calcDistancia()"></td>
-      </tr>
-      <tr>
-        <td class="point-label B">B</td>
-        <td><input class="coord-input" id="d_bx" value="-9√5"  oninput="calcDistancia()"></td>
-        <td><input class="coord-input" id="d_by" value="5/4"   oninput="calcDistancia()"></td>
-      </tr>
+      <tr><td class="point-label A">A</td><td><input class="coord-input" id="d_ax" value="-3√5" oninput="calcDistancia()"></td><td><input class="coord-input" id="d_ay" value="1/4" oninput="calcDistancia()"></td></tr>
+      <tr><td class="point-label B">B</td><td><input class="coord-input" id="d_bx" value="-9√5" oninput="calcDistancia()"></td><td><input class="coord-input" id="d_by" value="5/4" oninput="calcDistancia()"></td></tr>
     </tbody>
   </table>
-
   <div class="result-box">
-    <div class="result-row">
-      <span class="result-label">A</span>
-      <div class="sym-val">
-        <span class="sym" id="d_sym_a"></span>
-        <span class="dec" id="d_dec_a"></span>
-      </div>
-    </div>
-    <div class="result-row">
-      <span class="result-label">B</span>
-      <div class="sym-val">
-        <span class="sym" id="d_sym_b"></span>
-        <span class="dec" id="d_dec_b"></span>
-      </div>
-    </div>
+    <div class="result-row"><span class="result-label">A</span><div class="sym-val"><span class="sym" id="d_sym_a"></span><span class="dec" id="d_dec_a"></span></div></div>
+    <div class="result-row"><span class="result-label">B</span><div class="sym-val"><span class="sym" id="d_sym_b"></span><span class="dec" id="d_dec_b"></span></div></div>
     <div class="result-row hl">
       <span class="result-label">Distancia AB</span>
-      <span class="result-value accent" id="d_res">—</span>
+      <div class="copy-row"><span class="result-value accent" id="d_res">—</span><button class="btn-copy-sm" onclick="copyOne('d_res',this)">Copiar</button></div>
     </div>
   </div>
-
-  <div class="proc-toggle closed" id="tog-d" onclick="toggleProc('d')">
-    <span>Proceso paso a paso</span><span class="arrow">›</span>
+  <div class="copy-all-wrap">
+    <span class="copy-all-label">Copiar resultados completos</span>
+    <button class="btn-copy-all" onclick="copyAll('distancia')"><span class="copy-icon">⊕</span> Copiar todo — puntos · resultado · proceso</button>
   </div>
-  <div class="proc-panel" id="proc-d"></div>
-
-  <div class="formula-box">
-    <strong>Fórmula:</strong><br>
-    d(A,B) = √ [ (x₂ − x₁)² + (y₂ − y₁)² ]
-  </div>
+  <div class="proc-toggle closed" id="tog-d" onclick="toggleProc('d')"><span>Proceso paso a paso</span><span class="arrow">›</span></div>
+  <div class="proc-panel" id="proc-d" style="display:none"></div>
+  <div class="formula-box"><strong>d(A,B) =</strong> √ [ (x₂ − x₁)² + (y₂ − y₁)² ]</div>
 </div>
 
-<!-- TAB 2 -->
+<!-- ── TAB 2: PERÍMETRO ── -->
 <div class="section" id="sec-perimetro">
   <div class="tbl-head">
-    <h2>Perímetro del triángulo</h2>
-    <p class="hint">Formatos: <code>-3√5</code> &nbsp;·&nbsp; <code>1/4</code> &nbsp;·&nbsp; <code>(√3)/4</code> &nbsp;·&nbsp; <code>-(√3)/4</code> &nbsp;·&nbsp; <code>3.5</code></p>
+    <div class="tbl-head-left">
+      <h2>Perímetro del triángulo</h2>
+      <p class="hint">Formatos: <code>-3√5</code> · <code>1/4</code> · <code>(√3)/4</code> · <code>3.5</code></p>
+    </div>
+    <div class="tbl-actions">
+      <button class="btn-help" onclick="openHelp('perimetro')" title="Ayuda">?</button>
+      <button class="btn-clear" onclick="clearTab('perimetro')">✕ Limpiar</button>
+    </div>
   </div>
   <table class="coord-table">
     <thead><tr><th></th><th>x</th><th>y</th></tr></thead>
@@ -462,31 +521,38 @@ canvas { flex:1; width:100%; display:block; }
       <tr><td class="point-label C">C</td><td><input class="coord-input" id="p_cx" value="3" oninput="calcPerimetro()"></td><td><input class="coord-input" id="p_cy" value="5" oninput="calcPerimetro()"></td></tr>
     </tbody>
   </table>
-
   <div class="result-box">
-    <div class="result-row"><span class="result-label">Lado AB</span><div class="sym-val"><span class="sym" id="p_sym_ab"></span><span class="dec" id="p_ab">—</span></div></div>
-    <div class="result-row"><span class="result-label">Lado BC</span><div class="sym-val"><span class="sym" id="p_sym_bc"></span><span class="dec" id="p_bc">—</span></div></div>
-    <div class="result-row"><span class="result-label">Lado CA</span><div class="sym-val"><span class="sym" id="p_sym_ca"></span><span class="dec" id="p_ca">—</span></div></div>
-    <div class="result-row hl"><span class="result-label">Perímetro</span><span class="result-value accent" id="p_res">—</span></div>
+    <div class="result-row"><span class="result-label">Lado AB</span><div class="copy-row"><span class="result-value" id="p_ab">—</span><button class="btn-copy-sm" onclick="copyOne('p_ab',this)">Copiar</button></div></div>
+    <div class="result-row"><span class="result-label">Lado BC</span><div class="copy-row"><span class="result-value" id="p_bc">—</span><button class="btn-copy-sm" onclick="copyOne('p_bc',this)">Copiar</button></div></div>
+    <div class="result-row"><span class="result-label">Lado CA</span><div class="copy-row"><span class="result-value" id="p_ca">—</span><button class="btn-copy-sm" onclick="copyOne('p_ca',this)">Copiar</button></div></div>
+    <div class="result-row hl-ang"><span class="result-label">∠ A</span><div class="copy-row"><span class="result-value" id="p_angA" style="color:var(--warn)">—</span><button class="btn-copy-sm" onclick="copyOne('p_angA',this)">Copiar</button></div></div>
+    <div class="result-row hl-ang"><span class="result-label">∠ B</span><div class="copy-row"><span class="result-value" id="p_angB" style="color:var(--warn)">—</span><button class="btn-copy-sm" onclick="copyOne('p_angB',this)">Copiar</button></div></div>
+    <div class="result-row hl-ang"><span class="result-label">∠ C</span><div class="copy-row"><span class="result-value" id="p_angC" style="color:var(--warn)">—</span><button class="btn-copy-sm" onclick="copyOne('p_angC',this)">Copiar</button></div></div>
+    <div class="result-row hl">
+      <span class="result-label">Perímetro</span>
+      <div class="copy-row"><span class="result-value accent" id="p_res">—</span><button class="btn-copy-sm" onclick="copyOne('p_res',this)">Copiar</button></div>
+    </div>
   </div>
-
-  <div class="proc-toggle closed" id="tog-p" onclick="toggleProc('p')">
-    <span>Proceso paso a paso</span><span class="arrow">›</span>
+  <div class="copy-all-wrap">
+    <span class="copy-all-label">Copiar resultados completos</span>
+    <button class="btn-copy-all" onclick="copyAll('perimetro')"><span class="copy-icon">⊕</span> Copiar todo — puntos · lados · ángulos · proceso</button>
   </div>
-  <div class="proc-panel" id="proc-p"></div>
-
-  <div class="formula-box">
-    <strong>Lados:</strong><br>
-    d = √ [(Δx)² + (Δy)²]<br>
-    <strong>P = AB + BC + CA</strong>
-  </div>
+  <div class="proc-toggle closed" id="tog-p" onclick="toggleProc('p')"><span>Proceso paso a paso</span><span class="arrow">›</span></div>
+  <div class="proc-panel" id="proc-p" style="display:none"></div>
+  <div class="formula-box"><strong>d</strong> = √[(Δx)²+(Δy)²] &nbsp;·&nbsp; <strong>P = AB + BC + CA</strong><br><strong>Ángulos:</strong> cos A = (AB²+CA²−BC²) / 2·AB·CA</div>
 </div>
 
-<!-- TAB 3 — TIPO DE TRIÁNGULO -->
+<!-- ── TAB 3: TIPO ── -->
 <div class="section" id="sec-tipo">
   <div class="tbl-head">
-    <h2>Tipo de triángulo por vértices</h2>
-    <p class="hint">Formatos: <code>-3√5</code> &nbsp;·&nbsp; <code>1/4</code> &nbsp;·&nbsp; <code>(√3)/4</code> &nbsp;·&nbsp; <code>-(√3)/4</code> &nbsp;·&nbsp; <code>3.5</code></p>
+    <div class="tbl-head-left">
+      <h2>Tipo de triángulo por vértices</h2>
+      <p class="hint">Formatos: <code>-3√5</code> · <code>1/4</code> · <code>(√3)/4</code> · <code>3.5</code></p>
+    </div>
+    <div class="tbl-actions">
+      <button class="btn-help" onclick="openHelp('tipo')" title="Ayuda">?</button>
+      <button class="btn-clear" onclick="clearTab('tipo')">✕ Limpiar</button>
+    </div>
   </div>
   <table class="coord-table">
     <thead><tr><th></th><th>x</th><th>y</th></tr></thead>
@@ -496,33 +562,43 @@ canvas { flex:1; width:100%; display:block; }
       <tr><td class="point-label C">C</td><td><input class="coord-input" id="t_cx" value="2" oninput="calcTipo()"></td><td><input class="coord-input" id="t_cy" value="4" oninput="calcTipo()"></td></tr>
     </tbody>
   </table>
-
   <div class="result-box">
-    <div class="result-row"><span class="result-label">Lado AB</span><div class="sym-val"><span class="sym" id="t_sym_ab"></span><span class="dec" id="t_ab">—</span></div></div>
-    <div class="result-row"><span class="result-label">Lado BC</span><div class="sym-val"><span class="sym" id="t_sym_bc"></span><span class="dec" id="t_bc">—</span></div></div>
-    <div class="result-row"><span class="result-label">Lado CA</span><div class="sym-val"><span class="sym" id="t_sym_ca"></span><span class="dec" id="t_ca">—</span></div></div>
-    <div class="result-row"><span class="result-label">Lados iguales</span><span class="result-value" id="t_iguales" style="font-size:11px;text-align:right">—</span></div>
-    <div class="result-row hl"><span class="result-label">Tipo de triángulo</span><span class="result-value" id="t_res">—</span></div>
+    <div class="result-row"><span class="result-label">Lado AB</span><div class="copy-row"><span class="result-value" id="t_ab">—</span><button class="btn-copy-sm" onclick="copyOne('t_ab',this)">Copiar</button></div></div>
+    <div class="result-row"><span class="result-label">Lado BC</span><div class="copy-row"><span class="result-value" id="t_bc">—</span><button class="btn-copy-sm" onclick="copyOne('t_bc',this)">Copiar</button></div></div>
+    <div class="result-row"><span class="result-label">Lado CA</span><div class="copy-row"><span class="result-value" id="t_ca">—</span><button class="btn-copy-sm" onclick="copyOne('t_ca',this)">Copiar</button></div></div>
+    <div class="result-row"><span class="result-label">Lados iguales</span><span class="result-value" id="t_iguales" style="font-size:11px">—</span></div>
+    <div class="result-row hl-ang"><span class="result-label">∠ A</span><div class="copy-row"><span class="result-value" id="t_angA" style="color:var(--warn)">—</span><button class="btn-copy-sm" onclick="copyOne('t_angA',this)">Copiar</button></div></div>
+    <div class="result-row hl-ang"><span class="result-label">∠ B</span><div class="copy-row"><span class="result-value" id="t_angB" style="color:var(--warn)">—</span><button class="btn-copy-sm" onclick="copyOne('t_angB',this)">Copiar</button></div></div>
+    <div class="result-row hl-ang"><span class="result-label">∠ C</span><div class="copy-row"><span class="result-value" id="t_angC" style="color:var(--warn)">—</span><button class="btn-copy-sm" onclick="copyOne('t_angC',this)">Copiar</button></div></div>
+    <div class="result-row hl">
+      <span class="result-label">Tipo</span>
+      <div class="copy-row"><span class="result-value" id="t_res">—</span><button class="btn-copy-sm" onclick="copyOne('t_res',this)">Copiar</button></div>
+    </div>
   </div>
-
-  <div class="proc-toggle closed" id="tog-t" onclick="toggleProc('t')">
-    <span>Proceso paso a paso</span><span class="arrow">›</span>
+  <div class="copy-all-wrap">
+    <span class="copy-all-label">Copiar resultados completos</span>
+    <button class="btn-copy-all" onclick="copyAll('tipo')"><span class="copy-icon">⊕</span> Copiar todo — puntos · lados · tipo · ángulos · proceso</button>
   </div>
-  <div class="proc-panel" id="proc-t"></div>
-
+  <div class="proc-toggle closed" id="tog-t" onclick="toggleProc('t')"><span>Proceso paso a paso</span><span class="arrow">›</span></div>
+  <div class="proc-panel" id="proc-t" style="display:none"></div>
   <div class="formula-box">
-    <strong>Criterios:</strong><br>
-    AB = BC = CA &nbsp;→&nbsp; Equilátero<br>
-    Exactamente dos lados iguales &nbsp;→&nbsp; Isósceles<br>
-    AB ≠ BC ≠ CA &nbsp;→&nbsp; Escaleno
+    <strong>Equilátero:</strong> AB = BC = CA &nbsp;·&nbsp;
+    <strong>Isósceles:</strong> dos lados iguales &nbsp;·&nbsp;
+    <strong>Escaleno:</strong> ningún lado igual
   </div>
 </div>
 
-<!-- TAB 4 — ÁREA -->
+<!-- ── TAB 4: ÁREA ── -->
 <div class="section" id="sec-area">
   <div class="tbl-head">
-    <h2>Área del triángulo</h2>
-    <p class="hint">Formatos: <code>-3√5</code> &nbsp;·&nbsp; <code>1/4</code> &nbsp;·&nbsp; <code>(√3)/4</code> &nbsp;·&nbsp; <code>-(√3)/4</code> &nbsp;·&nbsp; <code>3.5</code></p>
+    <div class="tbl-head-left">
+      <h2>Área del triángulo</h2>
+      <p class="hint">Formatos: <code>-3√5</code> · <code>1/4</code> · <code>(√3)/4</code> · <code>3.5</code></p>
+    </div>
+    <div class="tbl-actions">
+      <button class="btn-help" onclick="openHelp('area')" title="Ayuda">?</button>
+      <button class="btn-clear" onclick="clearTab('area')">✕ Limpiar</button>
+    </div>
   </div>
   <table class="coord-table">
     <thead><tr><th></th><th>x</th><th>y</th></tr></thead>
@@ -532,28 +608,30 @@ canvas { flex:1; width:100%; display:block; }
       <tr><td class="point-label C">C</td><td><input class="coord-input" id="ar_cx" value="3" oninput="calcArea()"></td><td><input class="coord-input" id="ar_cy" value="5" oninput="calcArea()"></td></tr>
     </tbody>
   </table>
-
   <div class="result-box">
-    <div class="result-row"><span class="result-label">Lado AB</span><div class="sym-val"><span class="sym" id="ar_sym_ab"></span><span class="dec" id="ar_ab">—</span></div></div>
-    <div class="result-row"><span class="result-label">Lado BC</span><div class="sym-val"><span class="sym" id="ar_sym_bc"></span><span class="dec" id="ar_bc">—</span></div></div>
-    <div class="result-row"><span class="result-label">Lado CA</span><div class="sym-val"><span class="sym" id="ar_sym_ca"></span><span class="dec" id="ar_ca">—</span></div></div>
-    <div class="result-row hl"><span class="result-label">Área</span><span class="result-value accent" id="ar_res">—</span></div>
+    <div class="result-row"><span class="result-label">Lado AB</span><div class="copy-row"><span class="result-value" id="ar_ab">—</span><button class="btn-copy-sm" onclick="copyOne('ar_ab',this)">Copiar</button></div></div>
+    <div class="result-row"><span class="result-label">Lado BC</span><div class="copy-row"><span class="result-value" id="ar_bc">—</span><button class="btn-copy-sm" onclick="copyOne('ar_bc',this)">Copiar</button></div></div>
+    <div class="result-row"><span class="result-label">Lado CA</span><div class="copy-row"><span class="result-value" id="ar_ca">—</span><button class="btn-copy-sm" onclick="copyOne('ar_ca',this)">Copiar</button></div></div>
+    <div class="result-row hl-ang"><span class="result-label">∠ A</span><div class="copy-row"><span class="result-value" id="ar_angA" style="color:var(--warn)">—</span><button class="btn-copy-sm" onclick="copyOne('ar_angA',this)">Copiar</button></div></div>
+    <div class="result-row hl-ang"><span class="result-label">∠ B</span><div class="copy-row"><span class="result-value" id="ar_angB" style="color:var(--warn)">—</span><button class="btn-copy-sm" onclick="copyOne('ar_angB',this)">Copiar</button></div></div>
+    <div class="result-row hl-ang"><span class="result-label">∠ C</span><div class="copy-row"><span class="result-value" id="ar_angC" style="color:var(--warn)">—</span><button class="btn-copy-sm" onclick="copyOne('ar_angC',this)">Copiar</button></div></div>
+    <div class="result-row hl">
+      <span class="result-label">Área</span>
+      <div class="copy-row"><span class="result-value accent" id="ar_res">—</span><button class="btn-copy-sm" onclick="copyOne('ar_res',this)">Copiar</button></div>
+    </div>
   </div>
-
-  <div class="proc-toggle closed" id="tog-ar" onclick="toggleProc('ar')">
-    <span>Proceso paso a paso</span><span class="arrow">›</span>
+  <div class="copy-all-wrap">
+    <span class="copy-all-label">Copiar resultados completos</span>
+    <button class="btn-copy-all" onclick="copyAll('area')"><span class="copy-icon">⊕</span> Copiar todo — puntos · lados · ángulos · área · proceso</button>
   </div>
-  <div class="proc-panel" id="proc-ar"></div>
-
-  <div class="formula-box">
-    <strong>Fórmula (determinante):</strong><br>
-    A = ½ |x₁(y₂ − y₃) + x₂(y₃ − y₁) + x₃(y₁ − y₂)|
-  </div>
+  <div class="proc-toggle closed" id="tog-ar" onclick="toggleProc('ar')"><span>Proceso paso a paso</span><span class="arrow">›</span></div>
+  <div class="proc-panel" id="proc-ar" style="display:none"></div>
+  <div class="formula-box"><strong>Área =</strong> ½ |x₁(y₂−y₃) + x₂(y₃−y₁) + x₃(y₁−y₂)|</div>
 </div>
 
 </div><!-- /panel-left -->
 
-<!-- ══════ RIGHT ══════ -->
+<!-- ══════════════════ PANEL RIGHT ══════════════════ -->
 <div class="panel-right">
   <div class="graph-hd">
     <span class="graph-title">Plano cartesiano</span>
@@ -564,576 +642,694 @@ canvas { flex:1; width:100%; display:block; }
     </div>
   </div>
   <canvas id="cv"></canvas>
+  <!-- HISTORIAL -->
+  <div class="hist-drawer collapsed" id="hist-drawer">
+    <div class="hist-toggle" onclick="toggleHist()">
+      <span>Historial <span id="hist-count" style="color:var(--text-faint)"></span></span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="hist-clear-btn" onclick="clearHist(event)">Borrar todo</button>
+        <span class="arrow" style="font-size:13px">›</span>
+      </div>
+    </div>
+    <div class="hist-body" id="hist-body">
+      <div class="hist-empty" id="hist-empty">Sin cálculos registrados.</div>
+    </div>
+  </div>
 </div>
 </main>
 
-<script>
-// ══════════════════════════════════════════════════════════════
-//  PARSER — acepta: número, fracción, raíz cuadrada, combinaciones
-//  Soporta paréntesis: (√3)/4  -(√3)/4  (-√5)/2  (-(√3)/4)  etc.
-// ══════════════════════════════════════════════════════════════
-function parse(raw) {
-  if (!raw && raw !== 0) return null;
-  // Normalizar: quitar espacios, unificar √
-  let s = String(raw).trim().replace(/\s+/g,'');
-  if (s === '' || s === '-' || s === '+') return null;
+<!-- ══════════════════ MODAL AYUDA ══════════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeHelpOutside(event)">
+  <div class="modal" id="modal-box">
+    <div class="modal-head">
+      <h3 id="modal-title">Ayuda</h3>
+      <button class="modal-close" onclick="closeHelp()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
 
-  // Quitar paréntesis externos si envuelven toda la expresión
-  // Ej: (-(√3)/4) → -(√3)/4
-  function stripOuterParens(str) {
-    let t = str;
-    while (t.startsWith('(') && t.endsWith(')')) {
-      // Verificar que el paren de apertura cierra al final
-      let depth = 0, valid = true;
-      for (let i = 0; i < t.length - 1; i++) {
-        if (t[i] === '(') depth++;
-        else if (t[i] === ')') { depth--; if (depth === 0) { valid = false; break; } }
-      }
-      if (valid) t = t.slice(1, -1);
-      else break;
+<script>
+// ══════════════════════════════════════════════════════════
+//  DARK MODE
+// ══════════════════════════════════════════════════════════
+function toggleTheme(){
+  const h=document.documentElement;
+  const dark=h.getAttribute('data-theme')==='dark';
+  const next=dark?'light':'dark';
+  h.setAttribute('data-theme',next);
+  document.getElementById('theme-label').textContent=dark?'Claro':'Oscuro';
+  document.getElementById('theme-thumb').textContent=dark?'☀️':'🌙';
+  localStorage.setItem('geo-theme',next);
+  showToast(dark?'Modo claro activado':'Modo oscuro activado');
+  drawGraph();
+}
+(function(){
+  const saved=localStorage.getItem('geo-theme')||'light';
+  document.documentElement.setAttribute('data-theme',saved);
+  document.getElementById('theme-label').textContent=saved==='dark'?'Oscuro':'Claro';
+  document.getElementById('theme-thumb').textContent=saved==='dark'?'🌙':'☀️';
+})();
+
+// ══════════════════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════════════════
+let _toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+// ══════════════════════════════════════════════════════════
+//  PARSER
+// ══════════════════════════════════════════════════════════
+function parse(raw){
+  if(!raw&&raw!==0)return null;
+  let s=String(raw).trim().replace(/\s+/g,'');
+  if(s===''||s==='-'||s==='+')return null;
+  function strip(str){
+    let t=str;
+    while(t.startsWith('(')&&t.endsWith(')')){
+      let d=0,ok=true;
+      for(let i=0;i<t.length-1;i++){if(t[i]==='(')d++;else if(t[i]===')'){d--;if(d===0){ok=false;break;}}}
+      if(ok)t=t.slice(1,-1);else break;
     }
     return t;
   }
-
-  s = stripOuterParens(s);
-
-  // Extraer el valor numérico de una expresión √ (con o sin paréntesis)
-  // Ej: √3  √(3)  (√3)  (-√3)  -(√3)
-  // Devuelve el valor o null si no coincide
-  function parseSqrtAtom(str) {
-    // Puro √n
-    let m = str.match(/^([+-]?)√(\d+(?:\.\d+)?)$/);
-    if (m) {
-      const sign = m[1] === '-' ? -1 : 1;
-      return sign * Math.sqrt(+m[2]);
-    }
-    // √n entre paréntesis opcionales con signo externo: ±(√n)
-    m = str.match(/^([+-]?)\(√(\d+(?:\.\d+)?)\)$/);
-    if (m) {
-      const sign = m[1] === '-' ? -1 : 1;
-      return sign * Math.sqrt(+m[2]);
-    }
-    // (-√n) con paréntesis
-    m = str.match(/^\((-?)√(\d+(?:\.\d+)?)\)$/);
-    if (m) {
-      const sign = m[1] === '-' ? -1 : 1;
-      return sign * Math.sqrt(+m[2]);
-    }
+  s=strip(s);
+  function sqAtom(str){
+    let m=str.match(/^([+-]?)√(\d+(?:\.\d+)?)$/);if(m)return(m[1]==='-'?-1:1)*Math.sqrt(+m[2]);
+    m=str.match(/^([+-]?)\(√(\d+(?:\.\d+)?)\)$/);if(m)return(m[1]==='-'?-1:1)*Math.sqrt(+m[2]);
+    m=str.match(/^\((-?)√(\d+(?:\.\d+)?)\)$/);if(m)return(m[1]==='-'?-1:1)*Math.sqrt(+m[2]);
     return null;
   }
-
-  // ── 1. Número plano
-  let m = s.match(/^[+-]?\d+(?:\.\d+)?$/);
-  if (m) { const n = +s; return isNaN(n) ? null : { v: n, sym: s }; }
-
-  // ── 2. Fracción simple: ±a/b
-  m = s.match(/^([+-]?\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)$/);
-  if (m) {
-    const d = +m[2]; if (!d) return null;
-    return { v: +m[1]/d, sym: s };
-  }
-
-  // ── 3. Solo raíz (con o sin paréntesis): ±√n  ±(√n)  (-√n)
-  {
-    const sqv = parseSqrtAtom(s);
-    if (sqv !== null) return { v: sqv, sym: s };
-  }
-
-  // ── 4. Coeficiente entero × √:  ±a√b  (forma sin paréntesis)
-  m = s.match(/^([+-]?\d*(?:\.\d+)?)√(\d+(?:\.\d+)?)$/);
-  if (m) {
-    let c = m[1];
-    if (c===''||c==='+') c=1; else if (c==='-') c=-1; else c=+c;
-    return { v: c*Math.sqrt(+m[2]), sym: s };
-  }
-
-  // ── 5. Fracción con √ en numerador: ±(√n)/d  ±(-√n)/d  (√n)/d  (-√n)/d
-  //    Ej: (√3)/4   -(√3)/4   (-√5)/2   (-(√3))/4
-  m = s.match(/^([+-]?)\((-?)√(\d+(?:\.\d+)?)\)\/(\d+(?:\.\d+)?)$/);
-  if (m) {
-    const outerSign = m[1] === '-' ? -1 : 1;
-    const innerSign = m[2] === '-' ? -1 : 1;
-    const d = +m[4]; if (!d) return null;
-    return { v: outerSign * innerSign * Math.sqrt(+m[3]) / d, sym: s };
-  }
-
-  // ── 6. Fracción con coef entero × √ en numerador: ±a√b/c  ±(a√b)/c
-  //    Ej: 3√5/2   -3√5/4   (3√5)/2
-  m = s.match(/^([+-]?\d+(?:\.\d+)?)√(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)$/);
-  if (m) {
-    const d = +m[3]; if (!d) return null;
-    return { v: +m[1]*Math.sqrt(+m[2])/d, sym: s };
-  }
-  m = s.match(/^([+-]?)\((\d+(?:\.\d+)?)√(\d+(?:\.\d+)?)\)\/(\d+(?:\.\d+)?)$/);
-  if (m) {
-    const outerSign = m[1] === '-' ? -1 : 1;
-    const d = +m[4]; if (!d) return null;
-    return { v: outerSign * +m[2]*Math.sqrt(+m[3])/d, sym: s };
-  }
-
-  // ── 7. Fracción entera con √: ±a/b√c  (coef fraccionario × raíz)
-  m = s.match(/^([+-]?\d+)\/(\d+)√(\d+(?:\.\d+)?)$/);
-  if (m) {
-    const d = +m[2]; if (!d) return null;
-    return { v: (+m[1]/d)*Math.sqrt(+m[3]), sym: s };
-  }
-
-  // ── 8. Expresión entre paréntesis con fracción dentro: (±a/b)  (±a/b√c)
-  m = s.match(/^\(([^)]+)\)$/);
-  if (m) {
-    const inner = parse(m[1]);
-    if (inner) return { v: inner.v, sym: s };
-  }
-
-  // ── 9. Signo externo × paréntesis con fracción: -(a/b)  +(a/b)
-  m = s.match(/^([+-])\(([^)]+)\)$/);
-  if (m) {
-    const sign = m[1] === '-' ? -1 : 1;
-    const inner = parse(m[2]);
-    if (inner) return { v: sign * inner.v, sym: s };
-  }
-
+  let m;
+  m=s.match(/^[+-]?\d+(?:\.\d+)?$/);if(m){const n=+s;return isNaN(n)?null:{v:n,sym:s};}
+  m=s.match(/^([+-]?\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)$/);if(m){const d=+m[2];if(!d)return null;return{v:+m[1]/d,sym:s};}
+  {const q=sqAtom(s);if(q!==null)return{v:q,sym:s};}
+  m=s.match(/^([+-]?\d*(?:\.\d+)?)√(\d+(?:\.\d+)?)$/);if(m){let c=m[1];if(c===''||c==='+')c=1;else if(c==='-')c=-1;else c=+c;return{v:c*Math.sqrt(+m[2]),sym:s};}
+  m=s.match(/^([+-]?)\((-?)√(\d+(?:\.\d+)?)\)\/(\d+(?:\.\d+)?)$/);if(m){const o=m[1]==='-'?-1:1,i=m[2]==='-'?-1:1,d=+m[4];if(!d)return null;return{v:o*i*Math.sqrt(+m[3])/d,sym:s};}
+  m=s.match(/^([+-]?\d+(?:\.\d+)?)√(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)$/);if(m){const d=+m[3];if(!d)return null;return{v:+m[1]*Math.sqrt(+m[2])/d,sym:s};}
+  m=s.match(/^([+-]?)\((\d+(?:\.\d+)?)√(\d+(?:\.\d+)?)\)\/(\d+(?:\.\d+)?)$/);if(m){const o=m[1]==='-'?-1:1,d=+m[4];if(!d)return null;return{v:o*+m[2]*Math.sqrt(+m[3])/d,sym:s};}
+  m=s.match(/^([+-]?\d+)\/(\d+)√(\d+(?:\.\d+)?)$/);if(m){const d=+m[2];if(!d)return null;return{v:(+m[1]/d)*Math.sqrt(+m[3]),sym:s};}
+  m=s.match(/^\(([^)]+)\)$/);if(m){const inn=parse(m[1]);if(inn)return{v:inn.v,sym:s};}
+  m=s.match(/^([+-])\(([^)]+)\)$/);if(m){const sign=m[1]==='-'?-1:1,inn=parse(m[2]);if(inn)return{v:sign*inn.v,sym:s};}
   return null;
 }
 
-// Formato decimal: 4 posiciones, sin ceros superfluos al final
-function fd(n, p=4) {
-  if (n==null||isNaN(n)) return '—';
-  let s = n.toFixed(p);
-  // quitar trailing zeros pero conservar al menos 2 decimales
-  s = s.replace(/(\.\d{2,}?)0+$/, '$1');
-  return s;
+function fd(n,p=4){
+  if(n==null||isNaN(n))return'—';
+  let s=n.toFixed(p);s=s.replace(/(\.\d{2,}?)0+$/,'$1');return s;
+}
+function fmtAxis(n){return n.toFixed(2).replace(/\.?0+$/,'')||'0';}
+function ri(id){
+  const el=document.getElementById(id);if(!el)return null;
+  const p=parse(el.value);el.classList.toggle('invalid',el.value.trim()!==''&&p===null);return p;
+}
+function dist(x1,y1,x2,y2){return Math.sqrt((x2-x1)**2+(y2-y1)**2);}
+function angles(AB,BC,CA){
+  const cl=v=>Math.max(-1,Math.min(1,v));
+  const A=Math.acos(cl((AB*AB+CA*CA-BC*BC)/(2*AB*CA)))*180/Math.PI;
+  const B=Math.acos(cl((AB*AB+BC*BC-CA*CA)/(2*AB*BC)))*180/Math.PI;
+  return{A,B,C:180-A-B};
+}
+function fmtAng(d){return isNaN(d)?'—':`${fd(d,4)}°`;}
+
+// ══════════════════════════════════════════════════════════
+//  SYM INSERT
+// ══════════════════════════════════════════════════════════
+let lastFocused=null;
+document.addEventListener('focusin',e=>{if(e.target.classList.contains('coord-input'))lastFocused=e.target;});
+function insertSym(c){
+  if(!lastFocused)return;
+  const s=lastFocused.selectionStart,e2=lastFocused.selectionEnd;
+  lastFocused.value=lastFocused.value.slice(0,s)+c+lastFocused.value.slice(e2);
+  lastFocused.setSelectionRange(s+c.length,s+c.length);
+  lastFocused.focus();lastFocused.dispatchEvent(new Event('input'));
 }
 
-function fmtAxis(n) {
-  const s = n.toFixed(2).replace(/\.?0+$/,'');
-  return s || '0';
-}
-
-// Leer input con validación visual
-function ri(id) {
-  const el = document.getElementById(id);
-  if (!el) return null;
-  const p = parse(el.value);
-  el.classList.toggle('invalid', el.value.trim()!=='' && p===null);
-  return p;
-}
-
-function dist(x1,y1,x2,y2){ return Math.sqrt((x2-x1)**2+(y2-y1)**2); }
-
-// ══════════════════════════════════════════════════════════════
-//  FOCUSED INPUT TRACKING (para botones de símbolo)
-// ══════════════════════════════════════════════════════════════
-let lastFocused = null;
-document.addEventListener('focusin', e => {
-  if (e.target.classList.contains('coord-input')) lastFocused = e.target;
-});
-
-function insertSym(char) {
-  const el = lastFocused;
-  if (!el) return;
-  const s = el.selectionStart, e2 = el.selectionEnd;
-  el.value = el.value.slice(0,s) + char + el.value.slice(e2);
-  el.setSelectionRange(s+char.length, s+char.length);
-  el.focus();
-  el.dispatchEvent(new Event('input'));
-}
-
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  TABS
-// ══════════════════════════════════════════════════════════════
-const ALL_TABS = ['distancia','perimetro','tipo','area'];
-let tab = 'distancia';
-function switchTab(name) {
-  tab = name;
-  document.querySelectorAll('.tab').forEach((t,i)=>
-    t.classList.toggle('active', ALL_TABS[i]===name));
+// ══════════════════════════════════════════════════════════
+const ALL_TABS=['distancia','perimetro','tipo','area'];
+let tab='distancia';
+function switchTab(name){
+  tab=name;
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',ALL_TABS[i]===name));
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-'+name).classList.add('active');
-  document.querySelector('.legend-c').style.display = name==='distancia'?'none':'flex';
+  document.querySelector('.legend-c').style.display=name==='distancia'?'none':'flex';
   drawGraph();
 }
 
-// ══════════════════════════════════════════════════════════════
-//  PROCESO TOGGLE
-// ══════════════════════════════════════════════════════════════
-function toggleProc(k) {
-  const tog = document.getElementById('tog-'+k);
-  const open = tog.classList.toggle('open');
-  tog.classList.toggle('closed', !open);
-  const pan = document.getElementById('proc-'+k);
-  pan.style.display = open ? 'block' : 'none';
+// ══════════════════════════════════════════════════════════
+//  CLEAR
+// ══════════════════════════════════════════════════════════
+const TAB_INPUTS={
+  distancia:['d_ax','d_ay','d_bx','d_by'],
+  perimetro:['p_ax','p_ay','p_bx','p_by','p_cx','p_cy'],
+  tipo:['t_ax','t_ay','t_bx','t_by','t_cx','t_cy'],
+  area:['ar_ax','ar_ay','ar_bx','ar_by','ar_cx','ar_cy'],
+};
+const TAB_CALC={distancia:()=>calcDistancia(),perimetro:()=>calcPerimetro(),tipo:()=>calcTipo(),area:()=>calcArea()};
+function clearTab(name){
+  TAB_INPUTS[name].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.classList.remove('invalid');}});
+  TAB_CALC[name]();
 }
 
-// ══════════════════════════════════════════════════════════════
-//  HTML HELPERS PARA PROCESO
-// ══════════════════════════════════════════════════════════════
-const step = (n,title,body) =>
-  `<div class="step"><div class="step-hd"><span class="step-num">${n}</span>${title}</div><div class="step-body">${body}</div></div>`;
+// ══════════════════════════════════════════════════════════
+//  PROC TOGGLE
+// ══════════════════════════════════════════════════════════
+function toggleProc(k){
+  const tog=document.getElementById('tog-'+k);
+  const open=tog.classList.toggle('open');
+  tog.classList.toggle('closed',!open);
+  document.getElementById('proc-'+k).style.display=open?'block':'none';
+}
 
-const ln = (lbl, eq, val, dim='') =>
-  `<div class="ln"><span class="lbl">${lbl}</span><span class="eq">${eq}</span><span class="val">${val}</span>${dim?`<span class="dim">(${dim})</span>`:''}</div>`;
+// ══════════════════════════════════════════════════════════
+//  COPY — individual
+// ══════════════════════════════════════════════════════════
+function copyOne(id,btn){
+  const el=document.getElementById(id);if(!el)return;
+  let text=el.textContent.trim();
+  // strip badge HTML, keep only text
+  text=el.innerText||text;
+  if(!text||text==='—')return;
+  doClip(text,btn,'Copiado ✓','Copiar');
+}
 
-// ══════════════════════════════════════════════════════════════
-//  PROCESO DISTANCIA
-// ══════════════════════════════════════════════════════════════
+function doClip(text,btn,okLabel,resetLabel){
+  navigator.clipboard.writeText(text).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+  });
+  const short=text.length>60?text.slice(0,57)+'…':text;
+  showToast('Copiado ✓');
+  if(btn){btn.textContent=okLabel;btn.classList.add('ok');setTimeout(()=>{btn.textContent=resetLabel;btn.classList.remove('ok');},2000);}
+}
+
+// ══════════════════════════════════════════════════════════
+//  COPY ALL
+// ══════════════════════════════════════════════════════════
+function getInputSyms(tab){
+  const ids=TAB_INPUTS[tab];
+  const vals=ids.map(id=>{const p=ri(id);return p?p.sym:document.getElementById(id)?.value||'';});
+  if(tab==='distancia') return `A(${vals[0]}, ${vals[1]})  B(${vals[2]}, ${vals[3]})`;
+  return `A(${vals[0]}, ${vals[1]})  B(${vals[2]}, ${vals[3]})  C(${vals[4]}, ${vals[5]})`;
+}
+
+function gv(id){const el=document.getElementById(id);return el?el.innerText.trim():'—';}
+
+function getProcText(k){
+  const panel=document.getElementById('proc-'+k);
+  if(!panel||!panel.innerHTML.trim())return'(proceso no generado — ábrelo antes de copiar)';
+  return panel.innerText.trim().replace(/\n{3,}/g,'\n\n');
+}
+
+function copyAll(name){
+  const btn=document.querySelector(`#sec-${name} .btn-copy-all`);
+  let lines=['═══════════════════════════════════'];
+  const TAB_NAMES={distancia:'DISTANCIA ENTRE PUNTOS',perimetro:'PERÍMETRO DEL TRIÁNGULO',tipo:'TIPO DE TRIÁNGULO',area:'ÁREA DEL TRIÁNGULO'};
+  lines.push(`  ${TAB_NAMES[name]||name.toUpperCase()}`);
+  lines.push('═══════════════════════════════════');
+  lines.push('');
+  lines.push('── PUNTOS ──');
+  lines.push(getInputSyms(name));
+  lines.push('');
+  lines.push('── RESULTADOS ──');
+  if(name==='distancia'){
+    lines.push(`A            = ${gv('d_dec_a')} (${gv('d_sym_a')})`);
+    lines.push(`B            = ${gv('d_dec_b')} (${gv('d_sym_b')})`);
+    lines.push(`Distancia AB = ${gv('d_res')}`);
+  }
+  if(name==='perimetro'){
+    lines.push(`Lado AB  = ${gv('p_ab')}`);
+    lines.push(`Lado BC  = ${gv('p_bc')}`);
+    lines.push(`Lado CA  = ${gv('p_ca')}`);
+    lines.push(`Ángulo A = ${gv('p_angA')}`);
+    lines.push(`Ángulo B = ${gv('p_angB')}`);
+    lines.push(`Ángulo C = ${gv('p_angC')}`);
+    lines.push(`Perímetro= ${gv('p_res')}`);
+  }
+  if(name==='tipo'){
+    lines.push(`Lado AB       = ${gv('t_ab')}`);
+    lines.push(`Lado BC       = ${gv('t_bc')}`);
+    lines.push(`Lado CA       = ${gv('t_ca')}`);
+    lines.push(`Lados iguales = ${gv('t_iguales')}`);
+    lines.push(`Ángulo A      = ${gv('t_angA')}`);
+    lines.push(`Ángulo B      = ${gv('t_angB')}`);
+    lines.push(`Ángulo C      = ${gv('t_angC')}`);
+    lines.push(`Tipo          = ${gv('t_res')}`);
+  }
+  if(name==='area'){
+    lines.push(`Lado AB  = ${gv('ar_ab')}`);
+    lines.push(`Lado BC  = ${gv('ar_bc')}`);
+    lines.push(`Lado CA  = ${gv('ar_ca')}`);
+    lines.push(`Ángulo A = ${gv('ar_angA')}`);
+    lines.push(`Ángulo B = ${gv('ar_angB')}`);
+    lines.push(`Ángulo C = ${gv('ar_angC')}`);
+    lines.push(`Área     = ${gv('ar_res')}`);
+  }
+  lines.push('');
+  lines.push('── PROCESO PASO A PASO ──');
+  const procKey={distancia:'d',perimetro:'p',tipo:'t',area:'ar'};
+  lines.push(getProcText(procKey[name]));
+  lines.push('');
+  lines.push('═══════════════════════════════════');
+  doClip(lines.join('\n'),btn,'✓ Todo copiado','⊡ Copiar todo el resultado');
+}
+
+// ══════════════════════════════════════════════════════════
+//  HISTORIAL
+// ══════════════════════════════════════════════════════════
+let hist_log=[];
+function addHist(t,label,pts,result){
+  const now=new Date();
+  const time=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  hist_log.unshift({id:Date.now(),t,label,pts,result,time});
+  if(hist_log.length>50)hist_log.pop();
+  renderHist();
+}
+function deleteHist(id){hist_log=hist_log.filter(h=>h.id!==id);renderHist();}
+function clearHist(e){e.stopPropagation();hist_log=[];renderHist();}
+function toggleHist(){document.getElementById('hist-drawer').classList.toggle('collapsed');}
+function renderHist(){
+  const body=document.getElementById('hist-body');
+  const empty=document.getElementById('hist-empty');
+  const count=document.getElementById('hist-count');
+  count.textContent=hist_log.length?`(${hist_log.length})`:'';
+  body.querySelectorAll('.hist-row').forEach(r=>r.remove());
+  empty.style.display=hist_log.length?'none':'block';
+  const lbl={distancia:'Dist.',perimetro:'Perím.',tipo:'Tipo',area:'Área'};
+  hist_log.forEach(h=>{
+    const row=document.createElement('div');row.className='hist-row';
+    row.innerHTML=`<span class="hist-tab">${lbl[h.t]||h.t}</span><span class="hist-pts">${h.pts}</span><span class="hist-val">${h.result}</span><span class="hist-time">${h.time}</span><button class="hist-del" onclick="deleteHist(${h.id})">×</button>`;
+    body.appendChild(row);
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+//  HELP MODAL
+// ══════════════════════════════════════════════════════════
+const HELP_DATA = {
+  distancia: {
+    title: '📐 Distancia entre dos puntos',
+    desc: 'Calcula la distancia directa (línea recta) entre dos puntos A y B en el plano cartesiano. Es equivalente a la longitud del segmento que los une, y se deriva del Teorema de Pitágoras aplicado a las diferencias de coordenadas.',
+    inputs: 'Dos puntos: <strong>A(x₁, y₁)</strong> y <strong>B(x₂, y₂)</strong>.',
+    formulas: [
+      { label: 'Fórmula principal', f: 'd(A,B) = √ [ (x₂ − x₁)² + (y₂ − y₁)² ]' },
+      { label: 'Diferencias', f: 'Δx = x₂ − x₁     Δy = y₂ − y₁' },
+      { label: 'Equivalente', f: 'd = √ [ (Δx)² + (Δy)² ]' },
+    ],
+    steps: [
+      'Identificar las coordenadas de A y B',
+      'Calcular Δx = x₂ − x₁  y  Δy = y₂ − y₁',
+      'Elevar al cuadrado: (Δx)² y (Δy)²',
+      'Sumar y aplicar la raíz cuadrada: d = √[(Δx)²+(Δy)²]',
+    ],
+    example: { label: 'Ejemplo', text: 'A(0, 0), B(3, 4)  →  Δx=3, Δy=4  →  d = √(9+16) = √25 = 5' },
+    tip: 'Admite raíces y fracciones: escribe <code>-3√5</code> para −3√5, o <code>1/4</code> para ¼. El resultado siempre tiene 4 decimales de precisión.',
+  },
+  perimetro: {
+    title: '🔺 Perímetro del triángulo',
+    desc: 'Dado un triángulo definido por tres vértices A, B y C, calcula la longitud de cada lado (AB, BC, CA) con la fórmula de distancia, los suma para obtener el perímetro, y obtiene los tres ángulos internos mediante la Ley de Cosenos.',
+    inputs: 'Tres vértices: <strong>A(x₁,y₁)</strong>, <strong>B(x₂,y₂)</strong>, <strong>C(x₃,y₃)</strong>.',
+    formulas: [
+      { label: 'Cada lado', f: 'AB = √[(xB−xA)² + (yB−yA)²]' },
+      { label: 'Perímetro', f: 'P = AB + BC + CA' },
+      { label: 'Ángulo A (Ley de cosenos)', f: 'cos A = (AB² + CA² − BC²) / (2 · AB · CA)' },
+      { label: 'Ángulo B', f: 'cos B = (AB² + BC² − CA²) / (2 · AB · BC)' },
+      { label: 'Ángulo C', f: 'C = 180° − A − B' },
+    ],
+    steps: [
+      'Calcular los tres lados: AB, BC, CA con la fórmula de distancia',
+      'Sumar los tres lados → Perímetro',
+      'Aplicar la Ley de cosenos para obtener cada ángulo interior',
+      'Verificar: ∠A + ∠B + ∠C = 180°',
+    ],
+    example: { label: 'Ejemplo', text: 'A(0,0), B(6,0), C(3,5)  →  AB=6, BC≈5.83, CA≈5.83  →  P≈17.66' },
+    tip: 'Los tres ángulos siempre suman 180°. Si obtienes un valor distinto, verifica que los puntos no estén alineados (triángulo degenerado con área = 0).',
+  },
+  tipo: {
+    title: '🔷 Tipo de triángulo por vértices',
+    desc: 'Clasifica un triángulo en Equilátero, Isósceles o Escaleno comparando los tres lados calculados desde las coordenadas. También muestra los tres ángulos internos para análisis completo.',
+    inputs: 'Tres vértices: <strong>A</strong>, <strong>B</strong> y <strong>C</strong> con sus coordenadas.',
+    formulas: [
+      { label: 'Lados', f: 'AB, BC, CA  (fórmula de distancia)' },
+      { label: 'Equilátero', f: 'AB = BC = CA  → tres lados iguales → tres ángulos de 60°' },
+      { label: 'Isósceles', f: 'Exactamente dos lados iguales → dos ángulos iguales' },
+      { label: 'Escaleno', f: 'AB ≠ BC ≠ CA  → ningún lado igual, todos ángulos distintos' },
+      { label: 'Tolerancia numérica', f: '|lado₁ − lado₂| < 0.0001  → se consideran iguales' },
+    ],
+    steps: [
+      'Calcular AB, BC y CA con la fórmula de distancia',
+      'Comparar los tres pares de lados entre sí',
+      'Clasificar según cuántos pares son iguales',
+      'Calcular ángulos internos con la Ley de cosenos',
+    ],
+    example: { label: 'Ejemplo', text: 'A(0,0), B(4,0), C(2,4)  →  AB=4, BC≈4.47, CA≈4.47  →  Isósceles (BC=CA)' },
+    tip: 'Un triángulo equilátero tiene todos sus ángulos iguales a 60°. Un isósceles tiene exactamente dos ángulos iguales (los de la base).',
+  },
+  area: {
+    title: '⬡ Área del triángulo',
+    desc: 'Calcula el área de un triángulo dados sus tres vértices usando la fórmula del determinante (también conocida como fórmula de la Shoelace o del zapato). Es exacta y funciona en cualquier posición del plano.',
+    inputs: 'Tres vértices no colineales: <strong>A(x₁,y₁)</strong>, <strong>B(x₂,y₂)</strong>, <strong>C(x₃,y₃)</strong>.',
+    formulas: [
+      { label: 'Fórmula del determinante (Shoelace)', f: 'A = ½ · |x₁(y₂−y₃) + x₂(y₃−y₁) + x₃(y₁−y₂)|' },
+      { label: 'Valor absoluto', f: 'El |·| garantiza un área siempre positiva' },
+      { label: 'Verificación con Herón', f: 's = P/2   →   A = √[s(s−AB)(s−BC)(s−CA)]' },
+      { label: 'Ángulos (Ley de cosenos)', f: 'cos A = (AB²+CA²−BC²) / 2·AB·CA' },
+    ],
+    steps: [
+      'Sustituir las coordenadas en la fórmula del determinante',
+      'Calcular cada uno de los tres productos',
+      'Sumar los productos, dividir entre 2 y aplicar valor absoluto',
+      'Resultado: área en unidades cuadradas',
+    ],
+    example: { label: 'Ejemplo', text: 'A(0,0), B(6,0), C(3,5)  →  ½|0(0−5)+6(5−0)+3(0−0)| = ½|30| = 15' },
+    tip: 'Si el área resulta 0, los tres puntos son colineales — están en línea recta y no forman un triángulo real.',
+  },
+};
+
+function openHelp(name){
+  const d=HELP_DATA[name];if(!d)return;
+  document.getElementById('modal-title').textContent=d.title;
+  let html='';
+  // Descripción
+  html+=`<div class="modal-section"><div class="modal-section-title">¿Qué hace esta sección?</div><p class="modal-desc">${d.desc}</p></div>`;
+  // Entrada
+  html+=`<div class="modal-section"><div class="modal-section-title">Datos de entrada</div><p class="modal-desc">${d.inputs}</p></div>`;
+  // Fórmulas
+  html+=`<div class="modal-section"><div class="modal-section-title">Fórmulas</div><div class="modal-formula">`;
+  d.formulas.forEach(f=>{html+=`<div style="margin-bottom:8px"><strong>${f.label}:</strong><br><span style="font-family:'DM Mono',monospace;font-style:normal;color:var(--accent)">${f.f}</span></div>`;});
+  html+=`</div></div>`;
+  // Pasos
+  if(d.steps){
+    html+=`<div class="modal-section"><div class="modal-section-title">Pasos del proceso</div><div class="modal-formula" style="font-style:normal">`;
+    d.steps.forEach((s,i)=>{html+=`<div style="display:flex;gap:10px;margin-bottom:6px;align-items:flex-start"><span style="background:var(--accent);color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:9px;font-style:normal;flex-shrink:0;margin-top:1px">${i+1}</span><span>${s}</span></div>`;});
+    html+=`</div></div>`;
+  }
+  // Ejemplo
+  if(d.example){
+    html+=`<div class="modal-section"><div class="modal-section-title">${d.example.label}</div><div class="modal-formula" style="font-style:normal;font-family:'DM Mono',monospace;font-size:11px;color:var(--accent)">${d.example.text}</div></div>`;
+  }
+  // Tip
+  html+=`<div class="modal-section"><div class="modal-tip">💡 ${d.tip.replace(/<code>(.*?)<\/code>/g,'<code>$1</code>')}</div></div>`;
+  document.getElementById('modal-body').innerHTML=html;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeHelp(){
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+function closeHelpOutside(e){if(e.target===document.getElementById('modal-overlay'))closeHelp();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeHelp();});
+
+// ══════════════════════════════════════════════════════════
+//  PROCESS HTML
+// ══════════════════════════════════════════════════════════
+const step=(n,t,b)=>`<div class="step"><div class="step-hd"><span class="step-num">${n}</span>${t}</div><div class="step-body">${b}</div></div>`;
+const ln=(lbl,eq,val,dim='')=>`<div class="ln"><span class="lbl">${lbl}</span><span class="eq">${eq}</span><span class="val">${val}</span>${dim?`<span class="dim">(${dim})</span>`:''}</div>`;
+const lnA=(lbl,eq,val)=>`<div class="ln"><span class="lbl">${lbl}</span><span class="eq">${eq}</span><span class="ang">${val}</span></div>`;
+const div_=(h='6')=>`<div class="spc" style="height:${h}px"></div>`;
+
 function procDist(ax,ay,bx,by){
-  const dx=bx.v-ax.v, dy=by.v-ay.v;
-  const dx2=dx*dx, dy2=dy*dy, sum=dx2+dy2, d=Math.sqrt(sum);
-
-  return [
-    step(1,'Identificar coordenadas',
-      ln('x₁',  '=', ax.sym, `≈ ${fd(ax.v)}`) +
-      ln('y₁',  '=', ay.sym, `≈ ${fd(ay.v)}`) +
-      ln('x₂',  '=', bx.sym, `≈ ${fd(bx.v)}`) +
-      ln('y₂',  '=', by.sym, `≈ ${fd(by.v)}`)
-    ),
-    step(2,'Diferencias Δx y Δy',
-      ln('Δx = x₂ − x₁', '=', `${fd(bx.v)} − (${fd(ax.v)})`, `= ${fd(dx)}`) +
-      ln('Δy = y₂ − y₁', '=', `${fd(by.v)} − (${fd(ay.v)})`, `= ${fd(dy)}`)
-    ),
-    step(3,'Elevar al cuadrado',
-      ln('(Δx)²', '=', `(${fd(dx)})²`, `= ${fd(dx2)}`) +
-      ln('(Δy)²', '=', `(${fd(dy)})²`, `= ${fd(dy2)}`)
-    ),
-    step(4,'Sumar y aplicar raíz cuadrada',
-      ln('(Δx)²+(Δy)²', '=', `${fd(dx2)} + ${fd(dy2)}`, `= ${fd(sum)}`) +
-      `<div class="spc"></div>` +
-      `<div class="ln"><span class="lbl">d(A,B)</span><span class="eq">=</span>` +
-      `<span class="val">√ ${fd(sum)}</span><span class="eq">=</span>` +
-      `<span class="fin">${fd(d)}</span></div>`
-    )
+  const dx=bx.v-ax.v,dy=by.v-ay.v,dx2=dx*dx,dy2=dy*dy,sum=dx2+dy2,d=Math.sqrt(sum);
+  return[
+    step(1,'Identificar coordenadas',ln('x₁','=',ax.sym,`≈ ${fd(ax.v)}`)+ln('y₁','=',ay.sym,`≈ ${fd(ay.v)}`)+ln('x₂','=',bx.sym,`≈ ${fd(bx.v)}`)+ln('y₂','=',by.sym,`≈ ${fd(by.v)}`)),
+    step(2,'Diferencias Δx, Δy',ln('Δx = x₂ − x₁','=',`${fd(bx.v)} − (${fd(ax.v)})`,`= ${fd(dx)}`)+ln('Δy = y₂ − y₁','=',`${fd(by.v)} − (${fd(ay.v)})`,`= ${fd(dy)}`)),
+    step(3,'Elevar al cuadrado',ln('(Δx)²','=',`(${fd(dx)})²`,`= ${fd(dx2)}`)+ln('(Δy)²','=',`(${fd(dy)})²`,`= ${fd(dy2)}`)),
+    step(4,'Sumar y √',ln('(Δx)²+(Δy)²','=',`${fd(dx2)} + ${fd(dy2)}`,`= ${fd(sum)}`)+div_()+`<div class="ln"><span class="lbl">d(A,B)</span><span class="eq">=</span><span class="val">√ ${fd(sum)}</span><span class="eq">=</span><span class="fin">${fd(d)}</span></div>`)
   ].join('');
 }
 
-// ══════════════════════════════════════════════════════════════
-//  PROCESO PERÍMETRO
-// ══════════════════════════════════════════════════════════════
 function procPeri(ax,ay,bx,by,cx,cy){
-  const AB=dist(ax.v,ay.v,bx.v,by.v);
-  const BC=dist(bx.v,by.v,cx.v,cy.v);
-  const CA=dist(cx.v,cy.v,ax.v,ay.v);
-
-  const sideBlock = (name, p1x,p1y,p2x,p2y, d) => {
-    const ddx=p2x.v-p1x.v, ddy=p2y.v-p1y.v;
-    return `<div class="ln" style="color:var(--text-faint);font-size:9px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px">── ${name} ──</div>` +
-      ln('Δx','=',`${fd(p2x.v)} − (${fd(p1x.v)})`,`= ${fd(ddx)}`) +
-      ln('Δy','=',`${fd(p2y.v)} − (${fd(p1y.v)})`,`= ${fd(ddy)}`) +
-      `<div class="ln"><span class="lbl">${name}</span><span class="eq">=</span>` +
-      `<span class="val">√(${fd(ddx)}²+${fd(ddy)}²)</span><span class="eq">=</span>` +
-      `<span class="val">${fd(d)}</span></div><div class="spc"></div>`;
+  const AB=dist(ax.v,ay.v,bx.v,by.v),BC=dist(bx.v,by.v,cx.v,cy.v),CA=dist(cx.v,cy.v,ax.v,ay.v);
+  const ang=angles(AB,BC,CA);
+  const sb=(name,p1x,p1y,p2x,p2y,d)=>{
+    const ddx=p2x.v-p1x.v,ddy=p2y.v-p1y.v;
+    return `<div class="ln" style="color:var(--text-faint);font-size:9px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px">── ${name} ──</div>`+
+      ln('Δx','=',`${fd(p2x.v)} − (${fd(p1x.v)})`,`= ${fd(ddx)}`)+ln('Δy','=',`${fd(p2y.v)} − (${fd(p1y.v)})`,`= ${fd(ddy)}`)+
+      `<div class="ln"><span class="lbl">${name}</span><span class="eq">=</span><span class="val">√(${fd(ddx)}²+${fd(ddy)}²)</span><span class="eq">=</span><span class="val">${fd(d)}</span></div>${div_()}`;
   };
-
-  return [
-    step(1,'Vértices del triángulo',
-      ln('A','=',`(${ax.sym}, ${ay.sym})`,`(${fd(ax.v)}, ${fd(ay.v)})`) +
-      ln('B','=',`(${bx.sym}, ${by.sym})`,`(${fd(bx.v)}, ${fd(by.v)})`) +
-      ln('C','=',`(${cx.sym}, ${cy.sym})`,`(${fd(cx.v)}, ${fd(cy.v)})`)
-    ),
-    step(2,'Longitud de cada lado  d = √[(Δx)²+(Δy)²]',
-      sideBlock('AB',ax,ay,bx,by,AB)+
-      sideBlock('BC',bx,by,cx,cy,BC)+
-      sideBlock('CA',cx,cy,ax,ay,CA)
-    ),
-    step(3,'Perímetro = AB + BC + CA',
-      ln('P','=',`${fd(AB)} + ${fd(BC)} + ${fd(CA)}`) +
-      `<div class="spc"></div>` +
-      `<div class="ln"><span class="lbl">P</span><span class="eq">=</span><span class="fin">${fd(AB+BC+CA)}</span></div>`
-    )
+  return[
+    step(1,'Vértices',ln('A','=',`(${ax.sym}, ${ay.sym})`,`(${fd(ax.v)}, ${fd(ay.v)})`)+ln('B','=',`(${bx.sym}, ${by.sym})`,`(${fd(bx.v)}, ${fd(by.v)})`)+ln('C','=',`(${cx.sym}, ${cy.sym})`,`(${fd(cx.v)}, ${fd(cy.v)})`)),
+    step(2,'Calcular lados  d = √[(Δx)²+(Δy)²]',sb('AB',ax,ay,bx,by,AB)+sb('BC',bx,by,cx,cy,BC)+sb('CA',cx,cy,ax,ay,CA)),
+    step(3,'Perímetro',ln('P = AB+BC+CA','=',`${fd(AB)} + ${fd(BC)} + ${fd(CA)}`)+div_()+`<div class="ln"><span class="lbl">P</span><span class="eq">=</span><span class="fin">${fd(AB+BC+CA)}</span></div>`),
+    step(4,'Ángulos — Ley de cosenos',`<div class="ln"><span class="lbl" style="min-width:0">cos A = (AB²+CA²−BC²)/(2·AB·CA)</span></div>${div_()}`+lnA('∠ A','=',fmtAng(ang.A))+lnA('∠ B','=',fmtAng(ang.B))+lnA('∠ C','=',fmtAng(ang.C))+`<div class="ln"><span class="dim">Suma: ${fd(ang.A+ang.B+ang.C,2)}° ≈ 180°</span></div>`)
   ].join('');
 }
 
-// ══════════════════════════════════════════════════════════════
-//  PROCESO TIPO DE TRIÁNGULO (unificado)
-// ══════════════════════════════════════════════════════════════
 function procTipo(ax,ay,bx,by,cx,cy,AB,BC,CA,tipo,igual){
-  const eps=1e-4;
-  const e1=Math.abs(AB-BC)<eps, e2=Math.abs(BC-CA)<eps, e3=Math.abs(CA-AB)<eps;
-
-  const cmp=(l1,v1,l2,v2,eq)=>
-    `<div class="ln"><span class="lbl">${l1} vs ${l2}</span>` +
-    `<span class="val">${fd(v1)}</span><span class="eq">↔</span><span class="val">${fd(v2)}</span>` +
-    `<span class="${eq?'verdict-yes':'verdict-no'}">&nbsp;${eq?'✓ Igual':'✗ Distinto'}</span></div>`;
-
-  let concl='';
-  if(tipo==='Equilátero')
-    concl=`<div class="ln"><span class="lbl">Tipo</span><span class="verdict-yes">✓ EQUILÁTERO — AB = BC = CA = ${fd(AB)}</span></div>`;
-  else if(tipo==='Isósceles')
-    concl=`<div class="ln"><span class="lbl">Tipo</span><span class="verdict-yes">◆ ISÓSCELES — Lados iguales: ${igual.join(' · ')}</span></div>`;
-  else
-    concl=`<div class="ln"><span class="lbl">Tipo</span><span class="verdict-no">▲ ESCALENO — Los tres lados son distintos</span></div>`;
-
-  return [
-    step(1,'Calcular los tres lados',
-      ln('AB','=',`√[(${fd(bx.v-ax.v)})²+(${fd(by.v-ay.v)})²]`,`= ${fd(AB)}`) +
-      ln('BC','=',`√[(${fd(cx.v-bx.v)})²+(${fd(cy.v-by.v)})²]`,`= ${fd(BC)}`) +
-      ln('CA','=',`√[(${fd(ax.v-cx.v)})²+(${fd(ay.v-cy.v)})²]`,`= ${fd(CA)}`)
-    ),
-    step(2,'Comparar pares de lados',
-      cmp('AB',AB,'BC',BC,e1)+cmp('BC',BC,'CA',CA,e2)+cmp('CA',CA,'AB',AB,e3)
-    ),
-    step(3,'Conclusión',concl)
+  const eps=1e-4,e1=Math.abs(AB-BC)<eps,e2=Math.abs(BC-CA)<eps,e3=Math.abs(CA-AB)<eps;
+  const ang=angles(AB,BC,CA);
+  const cmp=(l1,v1,l2,v2,eq)=>`<div class="ln"><span class="lbl">${l1} vs ${l2}</span><span class="val">${fd(v1)}</span><span class="eq">↔</span><span class="val">${fd(v2)}</span><span class="${eq?'verdict-yes':'verdict-no'}">&nbsp;${eq?'✓ Igual':'✗ Distinto'}</span></div>`;
+  let concl=tipo==='Equilátero'?`<div class="ln"><span class="lbl">Tipo</span><span class="verdict-yes">✓ EQUILÁTERO — AB=BC=CA=${fd(AB)}</span></div>`:
+    tipo==='Isósceles'?`<div class="ln"><span class="lbl">Tipo</span><span class="verdict-yes">◆ ISÓSCELES — ${igual.join(' · ')}</span></div>`:
+    `<div class="ln"><span class="lbl">Tipo</span><span class="verdict-no">▲ ESCALENO — tres lados distintos</span></div>`;
+  return[step(1,'Lados',ln('AB','=',`√[(${fd(bx.v-ax.v)})²+(${fd(by.v-ay.v)})²]`,`= ${fd(AB)}`)+ln('BC','=',`√[(${fd(cx.v-bx.v)})²+(${fd(cy.v-by.v)})²]`,`= ${fd(BC)}`)+ln('CA','=',`√[(${fd(ax.v-cx.v)})²+(${fd(ay.v-cy.v)})²]`,`= ${fd(CA)}`)),
+    step(2,'Comparar lados',cmp('AB',AB,'BC',BC,e1)+cmp('BC',BC,'CA',CA,e2)+cmp('CA',CA,'AB',AB,e3)),
+    step(3,'Conclusión',concl),
+    step(4,'Ángulos',lnA('∠ A','=',fmtAng(ang.A))+lnA('∠ B','=',fmtAng(ang.B))+lnA('∠ C','=',fmtAng(ang.C)))
   ].join('');
 }
 
-// ══════════════════════════════════════════════════════════════
-//  PROCESO ÁREA
-// ══════════════════════════════════════════════════════════════
 function procArea(ax,ay,bx,by,cx,cy,area){
-  const t1=ax.v*(by.v-cy.v);
-  const t2=bx.v*(cy.v-ay.v);
-  const t3=cx.v*(ay.v-by.v);
-  const sum=t1+t2+t3;
-
-  return [
-    step(1,'Identificar vértices',
-      ln('A','=',`(${ax.sym}, ${ay.sym})`,`(${fd(ax.v)}, ${fd(ay.v)})`) +
-      ln('B','=',`(${bx.sym}, ${by.sym})`,`(${fd(bx.v)}, ${fd(by.v)})`) +
-      ln('C','=',`(${cx.sym}, ${cy.sym})`,`(${fd(cx.v)}, ${fd(cy.v)})`)
-    ),
-    step(2,'Aplicar fórmula del determinante',
-      `<div class="ln"><span class="lbl">A = ½|x₁(y₂−y₃) + x₂(y₃−y₁) + x₃(y₁−y₂)|</span></div>` +
-      `<div class="spc"></div>` +
-      ln('x₁(y₂−y₃)','=',`${fd(ax.v)}·(${fd(by.v)}−${fd(cy.v)})`,`= ${fd(t1)}`) +
-      ln('x₂(y₃−y₁)','=',`${fd(bx.v)}·(${fd(cy.v)}−${fd(ay.v)})`,`= ${fd(t2)}`) +
-      ln('x₃(y₁−y₂)','=',`${fd(cx.v)}·(${fd(ay.v)}−${fd(by.v)})`,`= ${fd(t3)}`)
-    ),
-    step(3,'Sumar y aplicar valor absoluto',
-      ln('Suma','=',`${fd(t1)} + ${fd(t2)} + ${fd(t3)}`,`= ${fd(sum)}`) +
-      `<div class="spc"></div>` +
-      `<div class="ln"><span class="lbl">Área</span><span class="eq">=</span>` +
-      `<span class="val">½ · |${fd(sum)}|</span><span class="eq">=</span>` +
-      `<span class="fin">${fd(area)}</span></div>`
-    )
+  const t1=ax.v*(by.v-cy.v),t2=bx.v*(cy.v-ay.v),t3=cx.v*(ay.v-by.v),sum=t1+t2+t3;
+  const AB=dist(ax.v,ay.v,bx.v,by.v),BC=dist(bx.v,by.v,cx.v,cy.v),CA=dist(cx.v,cy.v,ax.v,ay.v);
+  const ang=angles(AB,BC,CA);
+  return[
+    step(1,'Vértices',ln('A','=',`(${ax.sym}, ${ay.sym})`,`(${fd(ax.v)}, ${fd(ay.v)})`)+ln('B','=',`(${bx.sym}, ${by.sym})`,`(${fd(bx.v)}, ${fd(by.v)})`)+ln('C','=',`(${cx.sym}, ${cy.sym})`,`(${fd(cx.v)}, ${fd(cy.v)})`)),
+    step(2,'Determinante',`<div class="ln"><span class="lbl">A = ½|x₁(y₂−y₃)+x₂(y₃−y₁)+x₃(y₁−y₂)|</span></div>${div_()}`+ln('x₁(y₂−y₃)','=',`${fd(ax.v)}·(${fd(by.v)}−${fd(cy.v)})`,`= ${fd(t1)}`)+ln('x₂(y₃−y₁)','=',`${fd(bx.v)}·(${fd(cy.v)}−${fd(ay.v)})`,`= ${fd(t2)}`)+ln('x₃(y₁−y₂)','=',`${fd(cx.v)}·(${fd(ay.v)}−${fd(by.v)})`,`= ${fd(t3)}`)),
+    step(3,'Resultado',ln('Suma','=',`${fd(t1)}+${fd(t2)}+${fd(t3)}`,`= ${fd(sum)}`)+div_()+`<div class="ln"><span class="lbl">Área</span><span class="eq">=</span><span class="val">½·|${fd(sum)}|</span><span class="eq">=</span><span class="fin">${fd(area)}</span></div>`),
+    step(4,'Ángulos',lnA('∠ A','=',fmtAng(ang.A))+lnA('∠ B','=',fmtAng(ang.B))+lnA('∠ C','=',fmtAng(ang.C)))
   ].join('');
 }
 
-// ══════════════════════════════════════════════════════════════
-//  CALC FUNCTIONS
-// ══════════════════════════════════════════════════════════════
-function calcTipo(){
-  const ax=ri('t_ax'),ay=ri('t_ay'),bx=ri('t_bx'),by=ri('t_by'),cx=ri('t_cx'),cy=ri('t_cy');
-  if(!ax||!ay||!bx||!by||!cx||!cy){ drawGraph(); return; }
-  const AB=dist(ax.v,ay.v,bx.v,by.v), BC=dist(bx.v,by.v,cx.v,cy.v), CA=dist(cx.v,cy.v,ax.v,ay.v);
-  const eps=1e-4;
-  const e1=Math.abs(AB-BC)<eps, e2=Math.abs(BC-CA)<eps, e3=Math.abs(CA-AB)<eps;
-  const equi = e1 && e2;
-  const iso  = !equi && (e1||e2||e3);
-  const esc  = !e1 && !e2 && !e3;
-
-  const igual=[e1?'AB=BC':'',e2?'BC=CA':'',e3?'CA=AB':''].filter(Boolean);
-
-  document.getElementById('t_ab').textContent=fd(AB);
-  document.getElementById('t_bc').textContent=fd(BC);
-  document.getElementById('t_ca').textContent=fd(CA);
-  document.getElementById('t_iguales').textContent=igual.join(' · ')||'—';
-
-  let badge='', tipo='';
-  if(equi){ tipo='Equilátero'; badge='<span class="badge yes">✓ Equilátero</span>'; }
-  else if(iso){ tipo='Isósceles'; badge='<span class="badge info">◆ Isósceles</span>'; }
-  else { tipo='Escaleno'; badge='<span class="badge no">▲ Escaleno</span>'; }
-
-  document.getElementById('t_res').innerHTML=badge;
-  document.getElementById('proc-t').innerHTML=procTipo(ax,ay,bx,by,cx,cy,AB,BC,CA,tipo,igual);
-  drawGraph();
-}
-
-function calcArea(){
-  const ax=ri('ar_ax'),ay=ri('ar_ay'),bx=ri('ar_bx'),by=ri('ar_by'),cx=ri('ar_cx'),cy=ri('ar_cy');
-  if(!ax||!ay||!bx||!by||!cx||!cy){ drawGraph(); return; }
-  const AB=dist(ax.v,ay.v,bx.v,by.v), BC=dist(bx.v,by.v,cx.v,cy.v), CA=dist(cx.v,cy.v,ax.v,ay.v);
-  const area=Math.abs((ax.v*(by.v-cy.v)+bx.v*(cy.v-ay.v)+cx.v*(ay.v-by.v))/2);
-
-  document.getElementById('ar_ab').textContent=fd(AB);
-  document.getElementById('ar_bc').textContent=fd(BC);
-  document.getElementById('ar_ca').textContent=fd(CA);
-  document.getElementById('ar_res').textContent=fd(area);
-  document.getElementById('proc-ar').innerHTML=procArea(ax,ay,bx,by,cx,cy,area);
-  drawGraph();
-}
-
+// ══════════════════════════════════════════════════════════
+//  CALC
+// ══════════════════════════════════════════════════════════
 function calcDistancia(){
   const ax=ri('d_ax'),ay=ri('d_ay'),bx=ri('d_bx'),by=ri('d_by');
-  if(!ax||!ay||!bx||!by){ document.getElementById('d_res').textContent='—'; drawGraph(); return; }
+  if(!ax||!ay||!bx||!by){document.getElementById('d_res').textContent='—';drawGraph();return;}
   const d=dist(ax.v,ay.v,bx.v,by.v);
-
   document.getElementById('d_sym_a').textContent=`(${ax.sym}, ${ay.sym})`;
   document.getElementById('d_dec_a').textContent=`(${fd(ax.v)}, ${fd(ay.v)})`;
   document.getElementById('d_sym_b').textContent=`(${bx.sym}, ${by.sym})`;
   document.getElementById('d_dec_b').textContent=`(${fd(bx.v)}, ${fd(by.v)})`;
   document.getElementById('d_res').textContent=fd(d);
-
   document.getElementById('proc-d').innerHTML=procDist(ax,ay,bx,by);
+  addHist('distancia','AB',`A(${ax.sym},${ay.sym}) B(${bx.sym},${by.sym})`,fd(d));
   drawGraph();
 }
 
 function calcPerimetro(){
   const ax=ri('p_ax'),ay=ri('p_ay'),bx=ri('p_bx'),by=ri('p_by'),cx=ri('p_cx'),cy=ri('p_cy');
-  if(!ax||!ay||!bx||!by||!cx||!cy){ drawGraph(); return; }
-  const AB=dist(ax.v,ay.v,bx.v,by.v), BC=dist(bx.v,by.v,cx.v,cy.v), CA=dist(cx.v,cy.v,ax.v,ay.v);
-
+  if(!ax||!ay||!bx||!by||!cx||!cy){drawGraph();return;}
+  const AB=dist(ax.v,ay.v,bx.v,by.v),BC=dist(bx.v,by.v,cx.v,cy.v),CA=dist(cx.v,cy.v,ax.v,ay.v);
+  const ang=angles(AB,BC,CA);
   document.getElementById('p_ab').textContent=fd(AB);
   document.getElementById('p_bc').textContent=fd(BC);
   document.getElementById('p_ca').textContent=fd(CA);
+  document.getElementById('p_angA').textContent=fmtAng(ang.A);
+  document.getElementById('p_angB').textContent=fmtAng(ang.B);
+  document.getElementById('p_angC').textContent=fmtAng(ang.C);
   document.getElementById('p_res').textContent=fd(AB+BC+CA);
   document.getElementById('proc-p').innerHTML=procPeri(ax,ay,bx,by,cx,cy);
+  addHist('perimetro','P',`A(${ax.sym},${ay.sym}) B(${bx.sym},${by.sym}) C(${cx.sym},${cy.sym})`,fd(AB+BC+CA));
   drawGraph();
 }
 
-// ══════════════════════════════════════════════════════════════
+function calcTipo(){
+  const ax=ri('t_ax'),ay=ri('t_ay'),bx=ri('t_bx'),by=ri('t_by'),cx=ri('t_cx'),cy=ri('t_cy');
+  if(!ax||!ay||!bx||!by||!cx||!cy){drawGraph();return;}
+  const AB=dist(ax.v,ay.v,bx.v,by.v),BC=dist(bx.v,by.v,cx.v,cy.v),CA=dist(cx.v,cy.v,ax.v,ay.v);
+  const eps=1e-4,e1=Math.abs(AB-BC)<eps,e2=Math.abs(BC-CA)<eps,e3=Math.abs(CA-AB)<eps;
+  const equi=e1&&e2,iso=!equi&&(e1||e2||e3);
+  const igual=[e1?'AB=BC':'',e2?'BC=CA':'',e3?'CA=AB':''].filter(Boolean);
+  const ang=angles(AB,BC,CA);
+  document.getElementById('t_ab').textContent=fd(AB);
+  document.getElementById('t_bc').textContent=fd(BC);
+  document.getElementById('t_ca').textContent=fd(CA);
+  document.getElementById('t_iguales').textContent=igual.join(' · ')||'—';
+  document.getElementById('t_angA').textContent=fmtAng(ang.A);
+  document.getElementById('t_angB').textContent=fmtAng(ang.B);
+  document.getElementById('t_angC').textContent=fmtAng(ang.C);
+  let badge='',tipo='';
+  if(equi){tipo='Equilátero';badge='<span class="badge yes">✓ Equilátero</span>';}
+  else if(iso){tipo='Isósceles';badge='<span class="badge info">◆ Isósceles</span>';}
+  else{tipo='Escaleno';badge='<span class="badge no">▲ Escaleno</span>';}
+  document.getElementById('t_res').innerHTML=badge;
+  document.getElementById('proc-t').innerHTML=procTipo(ax,ay,bx,by,cx,cy,AB,BC,CA,tipo,igual);
+  addHist('tipo',tipo,`A(${ax.sym},${ay.sym}) B(${bx.sym},${by.sym}) C(${cx.sym},${cy.sym})`,tipo);
+  drawGraph();
+}
+
+function calcArea(){
+  const ax=ri('ar_ax'),ay=ri('ar_ay'),bx=ri('ar_bx'),by=ri('ar_by'),cx=ri('ar_cx'),cy=ri('ar_cy');
+  if(!ax||!ay||!bx||!by||!cx||!cy){drawGraph();return;}
+  const AB=dist(ax.v,ay.v,bx.v,by.v),BC=dist(bx.v,by.v,cx.v,cy.v),CA=dist(cx.v,cy.v,ax.v,ay.v);
+  const area=Math.abs((ax.v*(by.v-cy.v)+bx.v*(cy.v-ay.v)+cx.v*(ay.v-by.v))/2);
+  const ang=angles(AB,BC,CA);
+  document.getElementById('ar_ab').textContent=fd(AB);
+  document.getElementById('ar_bc').textContent=fd(BC);
+  document.getElementById('ar_ca').textContent=fd(CA);
+  document.getElementById('ar_angA').textContent=fmtAng(ang.A);
+  document.getElementById('ar_angB').textContent=fmtAng(ang.B);
+  document.getElementById('ar_angC').textContent=fmtAng(ang.C);
+  document.getElementById('ar_res').textContent=fd(area);
+  document.getElementById('proc-ar').innerHTML=procArea(ax,ay,bx,by,cx,cy,area);
+  addHist('area','Área',`A(${ax.sym},${ay.sym}) B(${bx.sym},${by.sym}) C(${cx.sym},${cy.sym})`,fd(area));
+  drawGraph();
+}
+
+// ══════════════════════════════════════════════════════════
 //  CANVAS
-// ══════════════════════════════════════════════════════════════
-const cv  = document.getElementById('cv');
-const ctx = cv.getContext('2d');
+// ══════════════════════════════════════════════════════════
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+function getCssVar(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
 
 function resizeCv(){
-  const pr=cv.parentElement, hh=pr.querySelector('.graph-hd').offsetHeight;
+  const pr=cv.parentElement;
+  const hh=pr.querySelector('.graph-hd').offsetHeight;
+  const histH=document.getElementById('hist-drawer').offsetHeight;
   const r=pr.getBoundingClientRect();
-  cv.width =r.width *devicePixelRatio;
-  cv.height=(r.height-hh)*devicePixelRatio;
-  cv.style.width =r.width+'px';
-  cv.style.height=(r.height-hh)+'px';
+  cv.width=r.width*devicePixelRatio;
+  cv.height=Math.max((r.height-hh-histH)*devicePixelRatio,10);
+  cv.style.width=r.width+'px';
+  cv.style.height=Math.max(r.height-hh-histH,10)+'px';
   drawGraph();
 }
 
-function pts(){
-  const g=(id)=>{ const p=ri(id); return p?p.v:NaN; };
-  const gp=(id)=>ri(id);
-  if(tab==='distancia') return [
-    {x:g('d_ax'),y:g('d_ay'),label:'A',color:'#2d5be3',sym:{x:gp('d_ax'),y:gp('d_ay')}},
-    {x:g('d_bx'),y:g('d_by'),label:'B',color:'#c0392b',sym:{x:gp('d_bx'),y:gp('d_by')}},
+function getPts(){
+  const g=id=>{const p=ri(id);return p?p.v:NaN;};
+  const gp=id=>ri(id);
+  if(tab==='distancia')return[
+    {x:g('d_ax'),y:g('d_ay'),label:'A',color:getCssVar('--point-a'),sym:{x:gp('d_ax'),y:gp('d_ay')}},
+    {x:g('d_bx'),y:g('d_by'),label:'B',color:getCssVar('--point-b'),sym:{x:gp('d_bx'),y:gp('d_by')}},
   ];
-  if(tab==='perimetro') return [
-    {x:g('p_ax'),y:g('p_ay'),label:'A',color:'#2d5be3'},
-    {x:g('p_bx'),y:g('p_by'),label:'B',color:'#c0392b'},
-    {x:g('p_cx'),y:g('p_cy'),label:'C',color:'#1a6b3a'},
+  if(tab==='perimetro')return[
+    {x:g('p_ax'),y:g('p_ay'),label:'A',color:getCssVar('--point-a'),sym:{x:gp('p_ax'),y:gp('p_ay')}},
+    {x:g('p_bx'),y:g('p_by'),label:'B',color:getCssVar('--point-b'),sym:{x:gp('p_bx'),y:gp('p_by')}},
+    {x:g('p_cx'),y:g('p_cy'),label:'C',color:getCssVar('--point-c'),sym:{x:gp('p_cx'),y:gp('p_cy')}},
   ];
-  if(tab==='tipo') return [
-    {x:g('t_ax'),y:g('t_ay'),label:'A',color:'#2d5be3'},
-    {x:g('t_bx'),y:g('t_by'),label:'B',color:'#c0392b'},
-    {x:g('t_cx'),y:g('t_cy'),label:'C',color:'#1a6b3a'},
+  const prefix=tab==='tipo'?'t_':'ar_';
+  return[
+    {x:g(prefix+'ax'),y:g(prefix+'ay'),label:'A',color:getCssVar('--point-a')},
+    {x:g(prefix+'bx'),y:g(prefix+'by'),label:'B',color:getCssVar('--point-b')},
+    {x:g(prefix+'cx'),y:g(prefix+'cy'),label:'C',color:getCssVar('--point-c')},
   ];
-  if(tab==='area') return [
-    {x:g('ar_ax'),y:g('ar_ay'),label:'A',color:'#2d5be3'},
-    {x:g('ar_bx'),y:g('ar_by'),label:'B',color:'#c0392b'},
-    {x:g('ar_cx'),y:g('ar_cy'),label:'C',color:'#1a6b3a'},
-  ];
-  return [];
 }
 
-function niceStep(r){
-  if(!r||r<=0)return 1;
-  const p=Math.pow(10,Math.floor(Math.log10(r))), q=r/p;
-  if(q<1.5)return p; if(q<3.5)return 2*p; if(q<7.5)return 5*p; return 10*p;
+function niceStep(r){if(!r||r<=0)return 1;const p=Math.pow(10,Math.floor(Math.log10(r))),q=r/p;if(q<1.5)return p;if(q<3.5)return 2*p;if(q<7.5)return 5*p;return 10*p;}
+
+function drawSideLabel(sx1,sy1,sx2,sy2,text,dpr){
+  const mx=(sx1+sx2)/2,my=(sy1+sy2)/2;
+  const dx=sx2-sx1,dy=sy2-sy1,len=Math.sqrt(dx*dx+dy*dy)||1;
+  const nx=-dy/len,ny=dx/len,off=15*dpr;
+  const lx=mx+nx*off,ly=my+ny*off;
+  ctx.save();
+  ctx.font=`${9*dpr}px "DM Mono",monospace`;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  const tw=ctx.measureText(text).width,pad=4*dpr;
+  ctx.fillStyle=getCssVar('--bg');
+  ctx.beginPath();
+  if(ctx.roundRect)ctx.roundRect(lx-tw/2-pad,ly-7*dpr,tw+pad*2,14*dpr,3*dpr);
+  else ctx.rect(lx-tw/2-pad,ly-7*dpr,tw+pad*2,14*dpr);
+  ctx.fill();
+  ctx.strokeStyle=getCssVar('--border');ctx.lineWidth=0.5*dpr;ctx.stroke();
+  ctx.fillStyle=getCssVar('--text-muted');
+  ctx.fillText(text,lx,ly);
+  ctx.restore();
 }
 
 function drawGraph(){
   const W=cv.width,H=cv.height,dpr=devicePixelRatio;
   ctx.clearRect(0,0,W,H);
-  const PP=pts().filter(p=>!isNaN(p.x)&&!isNaN(p.y));
-  if(!PP.length)return;
+  const PP=getPts().filter(p=>!isNaN(p.x)&&!isNaN(p.y));
+  if(!PP.length||H<10)return;
 
   const xs=PP.map(p=>p.x),ys=PP.map(p=>p.y);
-  const minX=Math.min(...xs),maxX=Math.max(...xs);
-  const minY=Math.min(...ys),maxY=Math.max(...ys);
-
+  const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
   const pad=70*dpr;
-  const span=Math.max(maxX-minX,maxY-minY,2);
-  const extra=span*0.5;
-  const rX=Math.max(maxX-minX+extra,4), rY=Math.max(maxY-minY+extra,4);
+  const span=Math.max(maxX-minX,maxY-minY,2),extra=span*0.5;
+  const rX=Math.max(maxX-minX+extra,4),rY=Math.max(maxY-minY+extra,4);
   const cX=(minX+maxX)/2,cY=(minY+maxY)/2;
   const sc=Math.min((W-pad*2)/rX,(H-pad*2)/rY);
-
-  const S=(wx,wy)=>({x:W/2+(wx-cX)*sc, y:H/2-(wy-cY)*sc});
+  const S=(wx,wy)=>({x:W/2+(wx-cX)*sc,y:H/2-(wy-cY)*sc});
 
   const gs=niceStep(rX/5);
-  const x0=Math.floor((cX-W/(2*sc))/gs)*gs, x1=Math.ceil((cX+W/(2*sc))/gs)*gs;
-  const y0=Math.floor((cY-H/(2*sc))/gs)*gs, y1=Math.ceil((cY+H/(2*sc))/gs)*gs;
+  const x0=Math.floor((cX-W/(2*sc))/gs)*gs,x1=Math.ceil((cX+W/(2*sc))/gs)*gs;
+  const y0=Math.floor((cY-H/(2*sc))/gs)*gs,y1=Math.ceil((cY+H/(2*sc))/gs)*gs;
 
   // grid
-  ctx.strokeStyle='#eeeeeb'; ctx.lineWidth=1*dpr;
+  ctx.strokeStyle=getCssVar('--canvas-grid');ctx.lineWidth=1*dpr;
   for(let gx=x0;gx<=x1;gx+=gs){const s=S(gx,0);ctx.beginPath();ctx.moveTo(s.x,0);ctx.lineTo(s.x,H);ctx.stroke();}
   for(let gy=y0;gy<=y1;gy+=gs){const s=S(0,gy);ctx.beginPath();ctx.moveTo(0,s.y);ctx.lineTo(W,s.y);ctx.stroke();}
 
   // axis labels
-  ctx.fillStyle='#c0c0b2';ctx.font=`${9*dpr}px "DM Mono",monospace`;
+  ctx.fillStyle=getCssVar('--canvas-axis-label');ctx.font=`${9*dpr}px "DM Mono",monospace`;
   ctx.textAlign='center';
-  for(let gx=x0;gx<=x1;gx+=gs){
-    if(Math.abs(gx)<gs*0.01)continue;
-    const s=S(gx,0);
-    const ly=Math.min(Math.max(s.y+13*dpr,11*dpr),H-4*dpr);
-    ctx.fillText(fmtAxis(gx),s.x,ly);
-  }
+  for(let gx=x0;gx<=x1;gx+=gs){if(Math.abs(gx)<gs*0.01)continue;const s=S(gx,0);ctx.fillText(fmtAxis(gx),s.x,Math.min(Math.max(s.y+13*dpr,11*dpr),H-4*dpr));}
   ctx.textAlign='right';
-  for(let gy=y0;gy<=y1;gy+=gs){
-    if(Math.abs(gy)<gs*0.01)continue;
-    const s=S(0,gy);
-    const lx=Math.min(Math.max(s.x-5*dpr,22*dpr),W-6*dpr);
-    ctx.fillText(fmtAxis(gy),lx,s.y+3.5*dpr);
-  }
+  for(let gy=y0;gy<=y1;gy+=gs){if(Math.abs(gy)<gs*0.01)continue;const s=S(0,gy);ctx.fillText(fmtAxis(gy),Math.min(Math.max(s.x-5*dpr,22*dpr),W-6*dpr),s.y+3.5*dpr);}
 
   // axes
   const O=S(0,0);
-  ctx.strokeStyle='#b8b8a8'; ctx.lineWidth=1.5*dpr;
+  ctx.strokeStyle=getCssVar('--canvas-axis');ctx.lineWidth=1.5*dpr;
   ctx.beginPath();ctx.moveTo(0,O.y);ctx.lineTo(W,O.y);ctx.stroke();
   ctx.beginPath();ctx.moveTo(O.x,0);ctx.lineTo(O.x,H);ctx.stroke();
-  ctx.fillStyle='#c8c8b8';ctx.font=`${9*dpr}px "DM Mono",monospace`;ctx.textAlign='left';
+  ctx.fillStyle=getCssVar('--canvas-axis-label');ctx.font=`${9*dpr}px "DM Mono",monospace`;ctx.textAlign='left';
   ctx.fillText('O',O.x+5*dpr,O.y-5*dpr);
 
-  // shape
+  // shape + side labels
   if(PP.length>=2){
     const sp=PP.map(p=>S(p.x,p.y));
     ctx.beginPath();ctx.moveTo(sp[0].x,sp[0].y);
     for(let i=1;i<sp.length;i++)ctx.lineTo(sp[i].x,sp[i].y);
     if(PP.length===3)ctx.closePath();
-    if(PP.length===3){ctx.fillStyle='rgba(45,91,227,0.04)';ctx.fill();}
-    ctx.strokeStyle='#d4d4cc';ctx.lineWidth=1.5*dpr;
+    if(PP.length===3){ctx.fillStyle=getCssVar('--accent')+'0a';ctx.fill();}
+    ctx.strokeStyle=getCssVar('--border2');ctx.lineWidth=1.5*dpr;
     ctx.setLineDash([4*dpr,4*dpr]);ctx.stroke();ctx.setLineDash([]);
 
     if(PP.length===2){
+      const d=dist(PP[0].x,PP[0].y,PP[1].x,PP[1].y);
+      drawSideLabel(sp[0].x,sp[0].y,sp[1].x,sp[1].y,fd(d),dpr);
       const mx=(sp[0].x+sp[1].x)/2,my=(sp[0].y+sp[1].y)/2;
-      ctx.fillStyle='#eaeae6';ctx.beginPath();ctx.arc(mx,my,3.5*dpr,0,Math.PI*2);ctx.fill();
-      ctx.strokeStyle='#c0c0b8';ctx.lineWidth=1*dpr;ctx.stroke();
+      ctx.fillStyle=getCssVar('--surface2');ctx.beginPath();ctx.arc(mx,my,3.5*dpr,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle=getCssVar('--border2');ctx.lineWidth=1*dpr;ctx.stroke();
+    } else {
+      drawSideLabel(sp[0].x,sp[0].y,sp[1].x,sp[1].y,`AB:${fd(dist(PP[0].x,PP[0].y,PP[1].x,PP[1].y))}`,dpr);
+      drawSideLabel(sp[1].x,sp[1].y,sp[2].x,sp[2].y,`BC:${fd(dist(PP[1].x,PP[1].y,PP[2].x,PP[2].y))}`,dpr);
+      drawSideLabel(sp[2].x,sp[2].y,sp[0].x,sp[0].y,`CA:${fd(dist(PP[2].x,PP[2].y,PP[0].x,PP[0].y))}`,dpr);
     }
   }
 
   // points
   PP.forEach(p=>{
     const s=S(p.x,p.y);
-    ctx.beginPath();ctx.arc(s.x,s.y,9*dpr,0,Math.PI*2);
-    ctx.fillStyle=p.color+'14';ctx.fill();
-
-    ctx.beginPath();ctx.arc(s.x,s.y,4.5*dpr,0,Math.PI*2);
-    ctx.fillStyle=p.color;ctx.fill();
-    ctx.strokeStyle='#fff';ctx.lineWidth=2*dpr;ctx.stroke();
-
-    ctx.fillStyle=p.color;
-    ctx.font=`bold ${11*dpr}px "DM Mono",monospace`;
-    ctx.textAlign='center';
+    ctx.beginPath();ctx.arc(s.x,s.y,9*dpr,0,Math.PI*2);ctx.fillStyle=p.color+'18';ctx.fill();
+    ctx.beginPath();ctx.arc(s.x,s.y,4.5*dpr,0,Math.PI*2);ctx.fillStyle=p.color;ctx.fill();
+    ctx.strokeStyle=getCssVar('--bg');ctx.lineWidth=2*dpr;ctx.stroke();
+    ctx.fillStyle=p.color;ctx.font=`bold ${11*dpr}px "DM Mono",monospace`;ctx.textAlign='center';
     ctx.fillText(p.label,s.x,s.y-15*dpr);
-
-    // sym label if available (uses original expression)
-    const symLabel = p.sym
-      ? `(${p.sym.x?p.sym.x.sym:fmtAxis(p.x)}, ${p.sym.y?p.sym.y.sym:fmtAxis(p.y)})`
-      : `(${fmtAxis(p.x)}, ${fmtAxis(p.y)})`;
-    ctx.fillStyle='#aaa8a0';
-    ctx.font=`${8*dpr}px "DM Mono",monospace`;
-    ctx.fillText(symLabel,s.x,s.y-27*dpr);
+    const sl=p.sym?`(${p.sym.x?p.sym.x.sym:fmtAxis(p.x)}, ${p.sym.y?p.sym.y.sym:fmtAxis(p.y)})`:
+      `(${fmtAxis(p.x)}, ${fmtAxis(p.y)})`;
+    ctx.fillStyle=getCssVar('--text-faint');ctx.font=`${8*dpr}px "DM Mono",monospace`;
+    ctx.fillText(sl,s.x,s.y-27*dpr);
   });
 }
 
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 //  INIT
-// ══════════════════════════════════════════════════════════════
-// Inicializar panels como ocultos
-document.querySelectorAll('.proc-panel').forEach(p=>p.style.display='none');
-
+// ══════════════════════════════════════════════════════════
 window.addEventListener('resize',resizeCv);
 resizeCv();
-calcDistancia();
-calcPerimetro();
-calcTipo();
-calcArea();
+calcDistancia();calcPerimetro();calcTipo();calcArea();
+setTimeout(()=>{hist_log=[];renderHist();},60);
 </script>
 </body>
 </html>
