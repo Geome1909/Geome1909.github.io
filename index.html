@@ -368,7 +368,7 @@ canvas { flex:1; width:100%; display:block; }
 
 <header>
   <h1>Geometría Analítica</h1>
-  <span>Distancia · Perímetro · Triángulos</span>
+  <span>Distancia · Perímetro · Triángulo · Área</span>
   <div class="header-right">
     <a class="author-link" href="https://www.instagram.com/dhg1909" target="_blank" rel="noopener">dhg1909</a>
   </div>
@@ -386,9 +386,8 @@ canvas { flex:1; width:100%; display:block; }
 <nav>
   <button class="tab active" onclick="switchTab('distancia')">01 · Distancia</button>
   <button class="tab"        onclick="switchTab('perimetro')">02 · Perímetro</button>
-  <button class="tab"        onclick="switchTab('isoceles')">03 · Isósceles</button>
-  <button class="tab"        onclick="switchTab('equilatero')">04 · Equilátero</button>
-  <button class="tab"        onclick="switchTab('escaleno')">05 · Escaleno</button>
+  <button class="tab"        onclick="switchTab('tipo')">03 · Tipo de triángulo</button>
+  <button class="tab"        onclick="switchTab('area')">04 · Área</button>
 </nav>
 
 <main>
@@ -483,105 +482,72 @@ canvas { flex:1; width:100%; display:block; }
   </div>
 </div>
 
-<!-- TAB 3 -->
-<div class="section" id="sec-isoceles">
+<!-- TAB 3 — TIPO DE TRIÁNGULO -->
+<div class="section" id="sec-tipo">
   <div class="tbl-head">
-    <h2>Verificación isósceles</h2>
+    <h2>Tipo de triángulo por vértices</h2>
     <p class="hint">Formatos: <code>-3√5</code> &nbsp;·&nbsp; <code>1/4</code> &nbsp;·&nbsp; <code>(√3)/4</code> &nbsp;·&nbsp; <code>-(√3)/4</code> &nbsp;·&nbsp; <code>3.5</code></p>
   </div>
   <table class="coord-table">
     <thead><tr><th></th><th>x</th><th>y</th></tr></thead>
     <tbody>
-      <tr><td class="point-label A">A</td><td><input class="coord-input" id="i_ax" value="0" oninput="calcIsoceles()"></td><td><input class="coord-input" id="i_ay" value="0" oninput="calcIsoceles()"></td></tr>
-      <tr><td class="point-label B">B</td><td><input class="coord-input" id="i_bx" value="4" oninput="calcIsoceles()"></td><td><input class="coord-input" id="i_by" value="0" oninput="calcIsoceles()"></td></tr>
-      <tr><td class="point-label C">C</td><td><input class="coord-input" id="i_cx" value="2" oninput="calcIsoceles()"></td><td><input class="coord-input" id="i_cy" value="4" oninput="calcIsoceles()"></td></tr>
+      <tr><td class="point-label A">A</td><td><input class="coord-input" id="t_ax" value="0" oninput="calcTipo()"></td><td><input class="coord-input" id="t_ay" value="0" oninput="calcTipo()"></td></tr>
+      <tr><td class="point-label B">B</td><td><input class="coord-input" id="t_bx" value="4" oninput="calcTipo()"></td><td><input class="coord-input" id="t_by" value="0" oninput="calcTipo()"></td></tr>
+      <tr><td class="point-label C">C</td><td><input class="coord-input" id="t_cx" value="2" oninput="calcTipo()"></td><td><input class="coord-input" id="t_cy" value="4" oninput="calcTipo()"></td></tr>
     </tbody>
   </table>
 
   <div class="result-box">
-    <div class="result-row"><span class="result-label">Lado AB</span><div class="sym-val"><span class="sym" id="i_sym_ab"></span><span class="dec" id="i_ab">—</span></div></div>
-    <div class="result-row"><span class="result-label">Lado BC</span><div class="sym-val"><span class="sym" id="i_sym_bc"></span><span class="dec" id="i_bc">—</span></div></div>
-    <div class="result-row"><span class="result-label">Lado CA</span><div class="sym-val"><span class="sym" id="i_sym_ca"></span><span class="dec" id="i_ca">—</span></div></div>
-    <div class="result-row"><span class="result-label">Lados iguales</span><span class="result-value" id="i_iguales" style="font-size:11px;text-align:right">—</span></div>
-    <div class="result-row hl"><span class="result-label">¿Es isósceles?</span><span class="result-value" id="i_res">—</span></div>
+    <div class="result-row"><span class="result-label">Lado AB</span><div class="sym-val"><span class="sym" id="t_sym_ab"></span><span class="dec" id="t_ab">—</span></div></div>
+    <div class="result-row"><span class="result-label">Lado BC</span><div class="sym-val"><span class="sym" id="t_sym_bc"></span><span class="dec" id="t_bc">—</span></div></div>
+    <div class="result-row"><span class="result-label">Lado CA</span><div class="sym-val"><span class="sym" id="t_sym_ca"></span><span class="dec" id="t_ca">—</span></div></div>
+    <div class="result-row"><span class="result-label">Lados iguales</span><span class="result-value" id="t_iguales" style="font-size:11px;text-align:right">—</span></div>
+    <div class="result-row hl"><span class="result-label">Tipo de triángulo</span><span class="result-value" id="t_res">—</span></div>
   </div>
 
-  <div class="proc-toggle closed" id="tog-i" onclick="toggleProc('i')">
+  <div class="proc-toggle closed" id="tog-t" onclick="toggleProc('t')">
     <span>Proceso paso a paso</span><span class="arrow">›</span>
   </div>
-  <div class="proc-panel" id="proc-i"></div>
+  <div class="proc-panel" id="proc-t"></div>
 
   <div class="formula-box">
-    <strong>Condición:</strong><br>
-    AB = BC &nbsp;ó&nbsp; BC = CA &nbsp;ó&nbsp; CA = AB
+    <strong>Criterios:</strong><br>
+    AB = BC = CA &nbsp;→&nbsp; Equilátero<br>
+    Exactamente dos lados iguales &nbsp;→&nbsp; Isósceles<br>
+    AB ≠ BC ≠ CA &nbsp;→&nbsp; Escaleno
   </div>
 </div>
 
-<!-- TAB 4 — EQUILÁTERO -->
-<div class="section" id="sec-equilatero">
+<!-- TAB 4 — ÁREA -->
+<div class="section" id="sec-area">
   <div class="tbl-head">
-    <h2>Verificación equilátero</h2>
+    <h2>Área del triángulo</h2>
     <p class="hint">Formatos: <code>-3√5</code> &nbsp;·&nbsp; <code>1/4</code> &nbsp;·&nbsp; <code>(√3)/4</code> &nbsp;·&nbsp; <code>-(√3)/4</code> &nbsp;·&nbsp; <code>3.5</code></p>
   </div>
   <table class="coord-table">
     <thead><tr><th></th><th>x</th><th>y</th></tr></thead>
     <tbody>
-      <tr><td class="point-label A">A</td><td><input class="coord-input" id="eq_ax" value="0"  oninput="calcEquilatero()"></td><td><input class="coord-input" id="eq_ay" value="0"  oninput="calcEquilatero()"></td></tr>
-      <tr><td class="point-label B">B</td><td><input class="coord-input" id="eq_bx" value="2"  oninput="calcEquilatero()"></td><td><input class="coord-input" id="eq_by" value="0"  oninput="calcEquilatero()"></td></tr>
-      <tr><td class="point-label C">C</td><td><input class="coord-input" id="eq_cx" value="1"  oninput="calcEquilatero()"></td><td><input class="coord-input" id="eq_cy" value="√3" oninput="calcEquilatero()"></td></tr>
+      <tr><td class="point-label A">A</td><td><input class="coord-input" id="ar_ax" value="0" oninput="calcArea()"></td><td><input class="coord-input" id="ar_ay" value="0" oninput="calcArea()"></td></tr>
+      <tr><td class="point-label B">B</td><td><input class="coord-input" id="ar_bx" value="6" oninput="calcArea()"></td><td><input class="coord-input" id="ar_by" value="0" oninput="calcArea()"></td></tr>
+      <tr><td class="point-label C">C</td><td><input class="coord-input" id="ar_cx" value="3" oninput="calcArea()"></td><td><input class="coord-input" id="ar_cy" value="5" oninput="calcArea()"></td></tr>
     </tbody>
   </table>
 
   <div class="result-box">
-    <div class="result-row"><span class="result-label">Lado AB</span><div class="sym-val"><span class="sym" id="eq_sym_ab"></span><span class="dec" id="eq_ab">—</span></div></div>
-    <div class="result-row"><span class="result-label">Lado BC</span><div class="sym-val"><span class="sym" id="eq_sym_bc"></span><span class="dec" id="eq_bc">—</span></div></div>
-    <div class="result-row"><span class="result-label">Lado CA</span><div class="sym-val"><span class="sym" id="eq_sym_ca"></span><span class="dec" id="eq_ca">—</span></div></div>
-    <div class="result-row hl"><span class="result-label">¿Es equilátero?</span><span class="result-value" id="eq_res">—</span></div>
+    <div class="result-row"><span class="result-label">Lado AB</span><div class="sym-val"><span class="sym" id="ar_sym_ab"></span><span class="dec" id="ar_ab">—</span></div></div>
+    <div class="result-row"><span class="result-label">Lado BC</span><div class="sym-val"><span class="sym" id="ar_sym_bc"></span><span class="dec" id="ar_bc">—</span></div></div>
+    <div class="result-row"><span class="result-label">Lado CA</span><div class="sym-val"><span class="sym" id="ar_sym_ca"></span><span class="dec" id="ar_ca">—</span></div></div>
+    <div class="result-row hl"><span class="result-label">Área</span><span class="result-value accent" id="ar_res">—</span></div>
   </div>
 
-  <div class="proc-toggle closed" id="tog-eq" onclick="toggleProc('eq')">
+  <div class="proc-toggle closed" id="tog-ar" onclick="toggleProc('ar')">
     <span>Proceso paso a paso</span><span class="arrow">›</span>
   </div>
-  <div class="proc-panel" id="proc-eq"></div>
+  <div class="proc-panel" id="proc-ar"></div>
 
   <div class="formula-box">
-    <strong>Condición:</strong><br>
-    AB = BC = CA &nbsp;(los tres lados iguales)
-  </div>
-</div>
-
-<!-- TAB 5 — ESCALENO -->
-<div class="section" id="sec-escaleno">
-  <div class="tbl-head">
-    <h2>Verificación escaleno</h2>
-    <p class="hint">Formatos: <code>-3√5</code> &nbsp;·&nbsp; <code>1/4</code> &nbsp;·&nbsp; <code>(√3)/4</code> &nbsp;·&nbsp; <code>-(√3)/4</code> &nbsp;·&nbsp; <code>3.5</code></p>
-  </div>
-  <table class="coord-table">
-    <thead><tr><th></th><th>x</th><th>y</th></tr></thead>
-    <tbody>
-      <tr><td class="point-label A">A</td><td><input class="coord-input" id="es_ax" value="0" oninput="calcEscaleno()"></td><td><input class="coord-input" id="es_ay" value="0" oninput="calcEscaleno()"></td></tr>
-      <tr><td class="point-label B">B</td><td><input class="coord-input" id="es_bx" value="5" oninput="calcEscaleno()"></td><td><input class="coord-input" id="es_by" value="0" oninput="calcEscaleno()"></td></tr>
-      <tr><td class="point-label C">C</td><td><input class="coord-input" id="es_cx" value="2" oninput="calcEscaleno()"></td><td><input class="coord-input" id="es_cy" value="4" oninput="calcEscaleno()"></td></tr>
-    </tbody>
-  </table>
-
-  <div class="result-box">
-    <div class="result-row"><span class="result-label">Lado AB</span><div class="sym-val"><span class="sym" id="es_sym_ab"></span><span class="dec" id="es_ab">—</span></div></div>
-    <div class="result-row"><span class="result-label">Lado BC</span><div class="sym-val"><span class="sym" id="es_sym_bc"></span><span class="dec" id="es_bc">—</span></div></div>
-    <div class="result-row"><span class="result-label">Lado CA</span><div class="sym-val"><span class="sym" id="es_sym_ca"></span><span class="dec" id="es_ca">—</span></div></div>
-    <div class="result-row"><span class="result-label">Lados distintos</span><span class="result-value" id="es_distintos" style="font-size:11px;text-align:right">—</span></div>
-    <div class="result-row hl"><span class="result-label">¿Es escaleno?</span><span class="result-value" id="es_res">—</span></div>
-  </div>
-
-  <div class="proc-toggle closed" id="tog-es" onclick="toggleProc('es')">
-    <span>Proceso paso a paso</span><span class="arrow">›</span>
-  </div>
-  <div class="proc-panel" id="proc-es"></div>
-
-  <div class="formula-box">
-    <strong>Condición:</strong><br>
-    AB ≠ BC &nbsp;y&nbsp; BC ≠ CA &nbsp;y&nbsp; CA ≠ AB<br>
-    (los tres lados distintos entre sí)
+    <strong>Fórmula (determinante):</strong><br>
+    A = ½ |x₁(y₂ − y₃) + x₂(y₃ − y₁) + x₃(y₁ − y₂)|
   </div>
 </div>
 
@@ -776,7 +742,7 @@ function insertSym(char) {
 // ══════════════════════════════════════════════════════════════
 //  TABS
 // ══════════════════════════════════════════════════════════════
-const ALL_TABS = ['distancia','perimetro','isoceles','equilatero','escaleno'];
+const ALL_TABS = ['distancia','perimetro','tipo','area'];
 let tab = 'distancia';
 function switchTab(name) {
   tab = name;
@@ -878,22 +844,24 @@ function procPeri(ax,ay,bx,by,cx,cy){
 }
 
 // ══════════════════════════════════════════════════════════════
-//  PROCESO ISÓSCELES
+//  PROCESO TIPO DE TRIÁNGULO (unificado)
 // ══════════════════════════════════════════════════════════════
-function procIso(ax,ay,bx,by,cx,cy){
-  const AB=dist(ax.v,ay.v,bx.v,by.v);
-  const BC=dist(bx.v,by.v,cx.v,cy.v);
-  const CA=dist(cx.v,cy.v,ax.v,ay.v);
+function procTipo(ax,ay,bx,by,cx,cy,AB,BC,CA,tipo,igual){
   const eps=1e-4;
   const e1=Math.abs(AB-BC)<eps, e2=Math.abs(BC-CA)<eps, e3=Math.abs(CA-AB)<eps;
-  const iso=e1||e2||e3;
 
   const cmp=(l1,v1,l2,v2,eq)=>
     `<div class="ln"><span class="lbl">${l1} vs ${l2}</span>` +
     `<span class="val">${fd(v1)}</span><span class="eq">↔</span><span class="val">${fd(v2)}</span>` +
     `<span class="${eq?'verdict-yes':'verdict-no'}">&nbsp;${eq?'✓ Igual':'✗ Distinto'}</span></div>`;
 
-  const conds = [e1?'AB = BC':'', e2?'BC = CA':'', e3?'CA = AB':''].filter(Boolean);
+  let concl='';
+  if(tipo==='Equilátero')
+    concl=`<div class="ln"><span class="lbl">Tipo</span><span class="verdict-yes">✓ EQUILÁTERO — AB = BC = CA = ${fd(AB)}</span></div>`;
+  else if(tipo==='Isósceles')
+    concl=`<div class="ln"><span class="lbl">Tipo</span><span class="verdict-yes">◆ ISÓSCELES — Lados iguales: ${igual.join(' · ')}</span></div>`;
+  else
+    concl=`<div class="ln"><span class="lbl">Tipo</span><span class="verdict-no">▲ ESCALENO — Los tres lados son distintos</span></div>`;
 
   return [
     step(1,'Calcular los tres lados',
@@ -904,81 +872,38 @@ function procIso(ax,ay,bx,by,cx,cy){
     step(2,'Comparar pares de lados',
       cmp('AB',AB,'BC',BC,e1)+cmp('BC',BC,'CA',CA,e2)+cmp('CA',CA,'AB',AB,e3)
     ),
-    step(3,'Conclusión',
-      `<div class="ln"><span class="lbl">Resultado</span>` +
-      `<span class="${iso?'verdict-yes':'verdict-no'}">${iso?'✓ SÍ es isósceles':'✗ NO es isósceles'}</span></div>` +
-      (iso ? `<div class="ln"><span class="dim">Condición cumplida: ${conds.join(' · ')}</span></div>` :
-             `<div class="ln"><span class="dim">Ningún par de lados es igual.</span></div>`)
-    )
+    step(3,'Conclusión',concl)
   ].join('');
 }
 
 // ══════════════════════════════════════════════════════════════
-//  PROCESO EQUILÁTERO
+//  PROCESO ÁREA
 // ══════════════════════════════════════════════════════════════
-function procEqui(ax,ay,bx,by,cx,cy){
-  const AB=dist(ax.v,ay.v,bx.v,by.v);
-  const BC=dist(bx.v,by.v,cx.v,cy.v);
-  const CA=dist(cx.v,cy.v,ax.v,ay.v);
-  const eps=1e-4;
-  const e1=Math.abs(AB-BC)<eps, e2=Math.abs(BC-CA)<eps;
-  const equi=e1&&e2;
-
-  const cmp=(l1,v1,l2,v2,eq)=>
-    `<div class="ln"><span class="lbl">${l1} vs ${l2}</span>` +
-    `<span class="val">${fd(v1)}</span><span class="eq">↔</span><span class="val">${fd(v2)}</span>` +
-    `<span class="${eq?'verdict-yes':'verdict-no'}">&nbsp;${eq?'✓ Igual':'✗ Distinto'}</span></div>`;
+function procArea(ax,ay,bx,by,cx,cy,area){
+  const t1=ax.v*(by.v-cy.v);
+  const t2=bx.v*(cy.v-ay.v);
+  const t3=cx.v*(ay.v-by.v);
+  const sum=t1+t2+t3;
 
   return [
-    step(1,'Calcular los tres lados',
-      ln('AB','=',`√[(${fd(bx.v-ax.v)})²+(${fd(by.v-ay.v)})²]`,`= ${fd(AB)}`) +
-      ln('BC','=',`√[(${fd(cx.v-bx.v)})²+(${fd(cy.v-by.v)})²]`,`= ${fd(BC)}`) +
-      ln('CA','=',`√[(${fd(ax.v-cx.v)})²+(${fd(ay.v-cy.v)})²]`,`= ${fd(CA)}`)
+    step(1,'Identificar vértices',
+      ln('A','=',`(${ax.sym}, ${ay.sym})`,`(${fd(ax.v)}, ${fd(ay.v)})`) +
+      ln('B','=',`(${bx.sym}, ${by.sym})`,`(${fd(bx.v)}, ${fd(by.v)})`) +
+      ln('C','=',`(${cx.sym}, ${cy.sym})`,`(${fd(cx.v)}, ${fd(cy.v)})`)
     ),
-    step(2,'Comparar los tres pares',
-      cmp('AB',AB,'BC',BC,e1)+cmp('BC',BC,'CA',CA,e2)+cmp('CA',CA,'AB',AB,Math.abs(CA-AB)<eps)
+    step(2,'Aplicar fórmula del determinante',
+      `<div class="ln"><span class="lbl">A = ½|x₁(y₂−y₃) + x₂(y₃−y₁) + x₃(y₁−y₂)|</span></div>` +
+      `<div class="spc"></div>` +
+      ln('x₁(y₂−y₃)','=',`${fd(ax.v)}·(${fd(by.v)}−${fd(cy.v)})`,`= ${fd(t1)}`) +
+      ln('x₂(y₃−y₁)','=',`${fd(bx.v)}·(${fd(cy.v)}−${fd(ay.v)})`,`= ${fd(t2)}`) +
+      ln('x₃(y₁−y₂)','=',`${fd(cx.v)}·(${fd(ay.v)}−${fd(by.v)})`,`= ${fd(t3)}`)
     ),
-    step(3,'Conclusión',
-      `<div class="ln"><span class="lbl">Resultado</span>` +
-      `<span class="${equi?'verdict-yes':'verdict-no'}">${equi?'✓ SÍ es equilátero':'✗ NO es equilátero'}</span></div>` +
-      (equi
-        ? `<div class="ln"><span class="dim">AB = BC = CA = ${fd(AB)}</span></div>`
-        : `<div class="ln"><span class="dim">No todos los lados son iguales.</span></div>`)
-    )
-  ].join('');
-}
-
-// ══════════════════════════════════════════════════════════════
-//  PROCESO ESCALENO
-// ══════════════════════════════════════════════════════════════
-function procEsc(ax,ay,bx,by,cx,cy){
-  const AB=dist(ax.v,ay.v,bx.v,by.v);
-  const BC=dist(bx.v,by.v,cx.v,cy.v);
-  const CA=dist(cx.v,cy.v,ax.v,ay.v);
-  const eps=1e-4;
-  const d1=Math.abs(AB-BC)>=eps, d2=Math.abs(BC-CA)>=eps, d3=Math.abs(CA-AB)>=eps;
-  const esc=d1&&d2&&d3;
-
-  const cmp=(l1,v1,l2,v2,distinto)=>
-    `<div class="ln"><span class="lbl">${l1} vs ${l2}</span>` +
-    `<span class="val">${fd(v1)}</span><span class="eq">↔</span><span class="val">${fd(v2)}</span>` +
-    `<span class="${distinto?'verdict-yes':'verdict-no'}">&nbsp;${distinto?'✓ Distinto':'✗ Igual'}</span></div>`;
-
-  return [
-    step(1,'Calcular los tres lados',
-      ln('AB','=',`√[(${fd(bx.v-ax.v)})²+(${fd(by.v-ay.v)})²]`,`= ${fd(AB)}`) +
-      ln('BC','=',`√[(${fd(cx.v-bx.v)})²+(${fd(cy.v-by.v)})²]`,`= ${fd(BC)}`) +
-      ln('CA','=',`√[(${fd(ax.v-cx.v)})²+(${fd(ay.v-cy.v)})²]`,`= ${fd(CA)}`)
-    ),
-    step(2,'Verificar que ningún par es igual',
-      cmp('AB',AB,'BC',BC,d1)+cmp('BC',BC,'CA',CA,d2)+cmp('CA',CA,'AB',AB,d3)
-    ),
-    step(3,'Conclusión',
-      `<div class="ln"><span class="lbl">Resultado</span>` +
-      `<span class="${esc?'verdict-yes':'verdict-no'}">${esc?'✓ SÍ es escaleno':'✗ NO es escaleno'}</span></div>` +
-      (esc
-        ? `<div class="ln"><span class="dim">Los tres lados son distintos entre sí.</span></div>`
-        : `<div class="ln"><span class="dim">Al menos dos lados son iguales.</span></div>`)
+    step(3,'Sumar y aplicar valor absoluto',
+      ln('Suma','=',`${fd(t1)} + ${fd(t2)} + ${fd(t3)}`,`= ${fd(sum)}`) +
+      `<div class="spc"></div>` +
+      `<div class="ln"><span class="lbl">Área</span><span class="eq">=</span>` +
+      `<span class="val">½ · |${fd(sum)}|</span><span class="eq">=</span>` +
+      `<span class="fin">${fd(area)}</span></div>`
     )
   ].join('');
 }
@@ -986,40 +911,44 @@ function procEsc(ax,ay,bx,by,cx,cy){
 // ══════════════════════════════════════════════════════════════
 //  CALC FUNCTIONS
 // ══════════════════════════════════════════════════════════════
-function calcEquilatero(){
-  const ax=ri('eq_ax'),ay=ri('eq_ay'),bx=ri('eq_bx'),by=ri('eq_by'),cx=ri('eq_cx'),cy=ri('eq_cy');
+function calcTipo(){
+  const ax=ri('t_ax'),ay=ri('t_ay'),bx=ri('t_bx'),by=ri('t_by'),cx=ri('t_cx'),cy=ri('t_cy');
   if(!ax||!ay||!bx||!by||!cx||!cy){ drawGraph(); return; }
   const AB=dist(ax.v,ay.v,bx.v,by.v), BC=dist(bx.v,by.v,cx.v,cy.v), CA=dist(cx.v,cy.v,ax.v,ay.v);
   const eps=1e-4;
-  const equi=Math.abs(AB-BC)<eps && Math.abs(BC-CA)<eps;
+  const e1=Math.abs(AB-BC)<eps, e2=Math.abs(BC-CA)<eps, e3=Math.abs(CA-AB)<eps;
+  const equi = e1 && e2;
+  const iso  = !equi && (e1||e2||e3);
+  const esc  = !e1 && !e2 && !e3;
 
-  document.getElementById('eq_ab').textContent=fd(AB);
-  document.getElementById('eq_bc').textContent=fd(BC);
-  document.getElementById('eq_ca').textContent=fd(CA);
-  document.getElementById('eq_res').innerHTML=equi
-    ?'<span class="badge yes">✓ Sí es equilátero</span>'
-    :'<span class="badge no">✗ No es equilátero</span>';
-  document.getElementById('proc-eq').innerHTML=procEqui(ax,ay,bx,by,cx,cy);
+  const igual=[e1?'AB=BC':'',e2?'BC=CA':'',e3?'CA=AB':''].filter(Boolean);
+
+  document.getElementById('t_ab').textContent=fd(AB);
+  document.getElementById('t_bc').textContent=fd(BC);
+  document.getElementById('t_ca').textContent=fd(CA);
+  document.getElementById('t_iguales').textContent=igual.join(' · ')||'—';
+
+  let badge='', tipo='';
+  if(equi){ tipo='Equilátero'; badge='<span class="badge yes">✓ Equilátero</span>'; }
+  else if(iso){ tipo='Isósceles'; badge='<span class="badge info">◆ Isósceles</span>'; }
+  else { tipo='Escaleno'; badge='<span class="badge no">▲ Escaleno</span>'; }
+
+  document.getElementById('t_res').innerHTML=badge;
+  document.getElementById('proc-t').innerHTML=procTipo(ax,ay,bx,by,cx,cy,AB,BC,CA,tipo,igual);
   drawGraph();
 }
 
-function calcEscaleno(){
-  const ax=ri('es_ax'),ay=ri('es_ay'),bx=ri('es_bx'),by=ri('es_by'),cx=ri('es_cx'),cy=ri('es_cy');
+function calcArea(){
+  const ax=ri('ar_ax'),ay=ri('ar_ay'),bx=ri('ar_bx'),by=ri('ar_by'),cx=ri('ar_cx'),cy=ri('ar_cy');
   if(!ax||!ay||!bx||!by||!cx||!cy){ drawGraph(); return; }
   const AB=dist(ax.v,ay.v,bx.v,by.v), BC=dist(bx.v,by.v,cx.v,cy.v), CA=dist(cx.v,cy.v,ax.v,ay.v);
-  const eps=1e-4;
-  const d1=Math.abs(AB-BC)>=eps, d2=Math.abs(BC-CA)>=eps, d3=Math.abs(CA-AB)>=eps;
-  const esc=d1&&d2&&d3;
-  const distintos=[d1?'AB≠BC':'',d2?'BC≠CA':'',d3?'CA≠AB':''].filter(Boolean);
+  const area=Math.abs((ax.v*(by.v-cy.v)+bx.v*(cy.v-ay.v)+cx.v*(ay.v-by.v))/2);
 
-  document.getElementById('es_ab').textContent=fd(AB);
-  document.getElementById('es_bc').textContent=fd(BC);
-  document.getElementById('es_ca').textContent=fd(CA);
-  document.getElementById('es_distintos').textContent=distintos.join(' · ')||'—';
-  document.getElementById('es_res').innerHTML=esc
-    ?'<span class="badge yes">✓ Sí es escaleno</span>'
-    :'<span class="badge no">✗ No es escaleno</span>';
-  document.getElementById('proc-es').innerHTML=procEsc(ax,ay,bx,by,cx,cy);
+  document.getElementById('ar_ab').textContent=fd(AB);
+  document.getElementById('ar_bc').textContent=fd(BC);
+  document.getElementById('ar_ca').textContent=fd(CA);
+  document.getElementById('ar_res').textContent=fd(area);
+  document.getElementById('proc-ar').innerHTML=procArea(ax,ay,bx,by,cx,cy,area);
   drawGraph();
 }
 
@@ -1051,26 +980,6 @@ function calcPerimetro(){
   drawGraph();
 }
 
-function calcIsoceles(){
-  const ax=ri('i_ax'),ay=ri('i_ay'),bx=ri('i_bx'),by=ri('i_by'),cx=ri('i_cx'),cy=ri('i_cy');
-  if(!ax||!ay||!bx||!by||!cx||!cy){ drawGraph(); return; }
-  const AB=dist(ax.v,ay.v,bx.v,by.v), BC=dist(bx.v,by.v,cx.v,cy.v), CA=dist(cx.v,cy.v,ax.v,ay.v);
-  const eps=1e-4;
-  const e1=Math.abs(AB-BC)<eps, e2=Math.abs(BC-CA)<eps, e3=Math.abs(CA-AB)<eps;
-  const iso=e1||e2||e3;
-  const igual=[e1?'AB=BC':'',e2?'BC=CA':'',e3?'CA=AB':''].filter(Boolean);
-
-  document.getElementById('i_ab').textContent=fd(AB);
-  document.getElementById('i_bc').textContent=fd(BC);
-  document.getElementById('i_ca').textContent=fd(CA);
-  document.getElementById('i_iguales').textContent=igual.join(' · ')||'—';
-  document.getElementById('i_res').innerHTML=iso
-    ?'<span class="badge yes">✓ Sí es isósceles</span>'
-    :'<span class="badge no">✗ No es isósceles</span>';
-  document.getElementById('proc-i').innerHTML=procIso(ax,ay,bx,by,cx,cy);
-  drawGraph();
-}
-
 // ══════════════════════════════════════════════════════════════
 //  CANVAS
 // ══════════════════════════════════════════════════════════════
@@ -1099,21 +1008,17 @@ function pts(){
     {x:g('p_bx'),y:g('p_by'),label:'B',color:'#c0392b'},
     {x:g('p_cx'),y:g('p_cy'),label:'C',color:'#1a6b3a'},
   ];
-  if(tab==='equilatero') return [
-    {x:g('eq_ax'),y:g('eq_ay'),label:'A',color:'#2d5be3'},
-    {x:g('eq_bx'),y:g('eq_by'),label:'B',color:'#c0392b'},
-    {x:g('eq_cx'),y:g('eq_cy'),label:'C',color:'#1a6b3a'},
+  if(tab==='tipo') return [
+    {x:g('t_ax'),y:g('t_ay'),label:'A',color:'#2d5be3'},
+    {x:g('t_bx'),y:g('t_by'),label:'B',color:'#c0392b'},
+    {x:g('t_cx'),y:g('t_cy'),label:'C',color:'#1a6b3a'},
   ];
-  if(tab==='escaleno') return [
-    {x:g('es_ax'),y:g('es_ay'),label:'A',color:'#2d5be3'},
-    {x:g('es_bx'),y:g('es_by'),label:'B',color:'#c0392b'},
-    {x:g('es_cx'),y:g('es_cy'),label:'C',color:'#1a6b3a'},
+  if(tab==='area') return [
+    {x:g('ar_ax'),y:g('ar_ay'),label:'A',color:'#2d5be3'},
+    {x:g('ar_bx'),y:g('ar_by'),label:'B',color:'#c0392b'},
+    {x:g('ar_cx'),y:g('ar_cy'),label:'C',color:'#1a6b3a'},
   ];
-  return [
-    {x:g('i_ax'),y:g('i_ay'),label:'A',color:'#2d5be3'},
-    {x:g('i_bx'),y:g('i_by'),label:'B',color:'#c0392b'},
-    {x:g('i_cx'),y:g('i_cy'),label:'C',color:'#1a6b3a'},
-  ];
+  return [];
 }
 
 function niceStep(r){
@@ -1227,9 +1132,8 @@ window.addEventListener('resize',resizeCv);
 resizeCv();
 calcDistancia();
 calcPerimetro();
-calcIsoceles();
-calcEquilatero();
-calcEscaleno();
+calcTipo();
+calcArea();
 </script>
 </body>
 </html>
